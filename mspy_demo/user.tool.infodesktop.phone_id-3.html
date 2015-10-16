@@ -1,0 +1,583 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Device Management - Alice-Pc</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1409740370*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439105040*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443165840*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Alice-Pc" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[3]=user.tool.infodesktop; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="active tooltiped" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.tool.infodesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.dashboard.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li style="margin-bottom:15px;" class="">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="menu-item">Dashboard</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.keylogger_desktop.phone_id-3.html" id="keylogger_desktop">
+<span class="menu-item">Keylogger</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.launched_apps_desktop.phone_id-3.html" id="launched_apps_desktop">
+<span class="menu-item">Application Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.usersactivity.phone_id-3.html" id="usersactivity">
+<span class="menu-item">User Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.screenshotsdesktop.phone_id-3.html" id="screenshotsdesktop">
+<span class="menu-item">Screenshots</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.desktop_apps.phone_id-3.html" id="desktop_apps">
+<span class="menu-item tooltiped">Installed Apps</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.webmaildesktop.phone_id-3.html" id="webmail">
+<span class="menu-item tooltiped">Webmail</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="active">
+<a href="user.tool.infodesktop.phone_id-3.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-SettingsDesktop-main">
+<script type="text/javascript">
+function upgradeSubscriptionHandler(account_type) {
+	alert("Not available in demo");
+}
+</script>
+<div class="content-inner v2 phonemanag_page">
+<h1>Device Management</h1>
+<table class="table_wrapper" cellpadding="50">
+<tr>
+<td>
+<div class="phoneSettingsLeftCol">
+<h1>Desktop Information</h1>
+<table class="content-table">
+<tr>
+<th><h3>Computer name:</h3></th>
+<td>
+Alice-PC
+</td>
+</tr>
+<tr>
+<th><h3>Computer Nickname:</h3></th>
+<td>
+<input type="text" name="aPhone[account_alias]" id="phone-label" style="width:60%; border: 1px solid #c0c0c0;" maxlength="25" value="Alice-PC"/>
+<a href="#" title="e.g.: 'My son's PC'" class="icon-info-sign tooltiped" data-placement="top" onclick="return false;">&nbsp;</a>
+<span class="ajax-loader" style="display: none; position: relative; float: right;"><img alt="loader" src="img/ajax-loader.gif"></span>
+</td>
+</tr>
+<tr>
+<th><h3 style="text-transform:none;">OS:</h3></th>
+<td>
+Windows 7 64 bit Service Pack 1.0
+</td>
+</tr>
+<tr>
+<th><h3>CPU:</h3></th>
+<td>
+Intel(R) Core(TM) i3-2328M CPU @ 2.20GHz
+</td>
+</tr>
+<tr>
+<th><h3>RAM:</h3></th>
+<td>
+8092 MB
+</td>
+</tr>
+</table>
+<br style="clear:both;">
+</div>
+</td>
+<td class="winIco">
+<div class="phoneSettingsLeftCol alignLeft">
+<h1>User List</h1>
+<table class="content-table user-list">
+<tr>
+<th>Login Name</th>
+<th>Full Name</th>
+<th>Role</th>
+</tr>
+<tr>
+<td>Alice</td>
+<td>
+</td><td>
+admin
+</td>
+</tr>
+</table>
+<br style="clear:both;">
+</div>
+</td>
+</tr>
+</table>
+<br/>
+</div>
+<div class="phone-settings">
+<h1>System Settings</h1>
+<table class="content-table phoneSettingsLeftCol" style="width: 100%; border: none; ">
+<tr>
+<th><h3>Applications activity:</h3></th>
+<td style="padding: 0 6px;">
+<span class="switch on" data-rel="applications_enabled"></span>
+</td>
+<th><h3>Keylogger:</h3></th>
+<td style="padding: 0 6px;">
+<span class="switch on" data-rel="keylogger_enabled"></span>
+</td>
+<th><h3>Screenshots:</h3></th>
+<td style="padding: 0 6px;">
+<span class="switch on" data-rel="screenshots_enabled"></span>
+</td>
+ 
+</tr>
+</table>
+</div>
+<div class="content-inner v2 whiteBG" style="margin-top:22px;">
+<h1>Screenshots Settings</h1>
+<table class="content-table phoneSettingsLeftCol" style="width: 100%; border: none; ">
+<tr>
+<th><h3>Frequency of Screenshots Tracking:</h3></th>
+<td style="padding: 0 6px;">
+<laber for="frequency" class="tooltiped" title="Step is 30sec. Min value is 30sec.">
+<input type="number" name="screenshots_period" min="30" class="interval filter-numbers" value="300" id="frequency" step="30" data-step="30">
+&nbsp;sec
+</laber>
+</td>
+<th><h3>Delete Data After:</h3></th>
+<td style="padding: 0 6px;">
+<laber for="interval_clearData">
+<input type="number" name="deleteInterval" min="1" class="interval filter-numbers" value="14" id="interval_clearData" disabled>
+&nbsp;days
+</laber>
+</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript">
+var previousVal;
+    function strpos(haystack, needle, offset) {
+        var i = (haystack + '').indexOf(needle, (offset || 0));
+        return i === -1 ? false : i;
+    }
+
+
+    function canselCommand(element){
+        var id = element.attr('rel');
+        $.ajax({
+            type: "POST",
+                    url: $url,
+                    cache: false,
+                    data: "&com_id="+id+"&ajax=1&action=canc_command",
+                    dataType: "json",
+                    timeout: 5000,
+                    success: function (data) {
+                        if(data){
+                            if(element.parent().prev().find('span').hasClass('icon-ok-sign')){
+                                element.parent().parent().remove();
+                            } else {
+                                element.parent().parent().remove();
+                            }
+                        }
+                        if(data.result == 0){
+                            alert("Something gone wrong!");
+                        }
+                    }
+        }) ;
+        $('.tooltip-inner').hide();
+        $('.tooltip-arrow').hide();
+    
+    }
+    
+    function BeforeSend(){
+        $(".wifi-only").each(function(){
+            var $this = $(this);
+            if ($this.attr("value") == 2) {
+                var $name = $this.attr("name");
+                var $left_pos = strpos($name, "[");
+                var $right_pos = strpos($name, "]");
+                var $key = $name.substr($left_pos + 1, ($right_pos - $left_pos - 1));
+                document.getElementById("aConfig")['aConf[' + $key + ']'].value = 2;
+            }
+
+        })
+        return true;
+    }
+
+    $(document).ready(function () {
+        $('input[type="text"],input[type="number"], select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                updateRow($(this), 'edit');
+            }
+        });
+        $('input[type="text"],input[type="number"]').on('click touchstart', function () {
+            previousVal  = $(this).val();
+        });
+        $('.switch').on('click touchstart', function () {
+            if (!$(this).hasClass('noajax')) {
+                updateRow($(this), 'class');
+            }
+        });
+
+    });
+
+
+    function updateRow(object, el) {
+        el = el || 'edit'; 
+        var cmd, val;
+        var step;
+        if (object) {
+            if( el == 'edit' ){
+                //object.attr('disabled', 'disabled').css('color', 'gray');
+                cmd = $(object).attr('name');
+                step = $(object).data("step") || 30;
+
+                val = $(object).val();
+                if( !val || (val < step) || val % step != 0 && cmd!='aPhone[account_alias]'){ 
+                    //object.attr('disabled', 'disabled').css('color', 'gray');
+                    previousVal = previousVal || 30;
+                    $(object).val(previousVal); 
+                    val  =  $(object).val();   
+                }else {
+                    if( val % step  == 0){ 
+                        //object.attr('disabled', 'disabled').css('color', 'gray');
+                        $(object).val(parseInt(val));                  
+                        val  =  $(object).val();  
+                    }
+
+                }
+
+                
+            } 
+            else if( el == 'class' ){
+                cmd = $(object).attr('data-rel');
+                ( $(object).hasClass('on') ) ?  val = 1 : val = 0;              
+            }
+        }
+
+        showAjaxWindowInfo('Done');
+    }
+</script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

@@ -1,0 +1,755 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Line - Son Kevin</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1438870173*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1442930973*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444089600*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="https://demo.mspy.com/skin/site/main_new/js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Son Kevin" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[1]=user.view.line; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.line.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+<form action="user.view.line.phone_id-1.html" id="filter-form" onsubmit="return submitFilterHandler(this);" method="post">
+<div id="searchbar">
+<input type="hidden" name="do[mspy_filter_show]"/>
+<input id="quick-search-input" type="text" name="mspy_filter_f1" value="" onkeypress="keyPressHandler(event)" placeholder="Search" class="noajax"/>
+<span id="search-ico"></span>
+</div>
+<div id="period">
+<div class="selectmenu-container-top inline-block">
+<select id="select-period" name="period">
+<option value="0" selected="selected">All time</option>
+<option value="1">This year</option>
+<option value="2">Two months</option>
+<option value="3">This month</option>
+<option value="4">Two weeks</option>
+<option value="5">This week</option>
+<option value="6">Today</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-from-date" class=""/>
+</div>
+<div id="dash">&ndash;</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-to-date" class=""/>
+</div>
+<input type="hidden" value="2012-09-27&nbsp;00:00" name="mspy_filter_f2" id="mspy_filter_from"/>
+<input type="hidden" value="2015-10-06&nbsp;00:00" name="mspy_filter_f3" id="mspy_filter_to"/>
+<br style="clear:both;"/>
+</div>
+<br style="clear:both;"/>
+</form>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-1.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-1.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="">
+<a href="user.view.call.phone_id-1.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="">
+<a href="user.view.sms.phone_id-1.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.location.phone_id-1.html"> <span class="menu-item">Locations</span>
+</a> </li>
+<li class="">
+<a href="user.view.geofencing.phone_id-1.html" id="geofencing">
+<span class="menu-item tooltiped" style="max-width:98px;">Geo Fencing</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.wifinetworks.phone_id-1.html">
+<span class="menu-item">Wi-Fi Networks</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.photo.phone_id-1.html"> <span class="menu-item">Photos</span>
+</a> </li>
+<li class="active">
+<a href="user.view.line.phone_id-1.html"> <span class="menu-item">Line</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a> </li>
+<li class="">
+<a href="user.view.snapchat.phone_id-1.html" id="snapchat">
+<span class="menu-item">Snapchat</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.video.phone_id-1.html"> <span class="menu-item">Video Files</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class=" disabled">
+<span class="menu-item">Telegram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class=" disabled">
+<span class="menu-item">Instagram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class="">
+<a href="user.view.browser.phone_id-1.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.email.phone_id-1.html"> <span class="menu-item">Emails</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-1.html"> <span class="menu-item">Events</span>
+</a> </li>
+<li class="">
+<a href="user.view.block_websites.phone_id-1.html"> <span class="menu-item">Block Websites</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.skype.phone_id-1.html"> <span class="menu-item">Skype</span>
+</a> </li>
+<li class="">
+<a href="user.view.whatsapp.phone_id-1.html"> <span class="menu-item">WhatsApp</span>
+</a> </li>
+<li class="">
+<a href="user.view.viber.phone_id-1.html"> <span class="menu-item">Viber</span>
+</a> </li>
+<li class="">
+<a href="user.view.social.phone_id-1.html"> <span class="menu-item">Facebook Tracking</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.apps.phone_id-1.html"> <span class="menu-item">Installed Apps</span>
+</a> </li>
+<li class="">
+<a href="user.view.keylogger.phone_id-1.html"> <span class="menu-item">Keylogger</span>
+</a> </li>
+<li class="">
+<a href="user.tool.info.phone_id-1.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewLine-main">
+<script type="text/javascript">
+$(document).ready(function() {
+        var dLastWeek = new Date(1443535773*1000);
+        var startDateTextBox = $('#date-from');
+        var endDateTextBox = $('#date-to');
+        var maxDate, minDate;
+
+            startDateTextBox.datetimepicker({ 
+                dateFormat: 'mm/dd/yy',
+                timeFormat: 'hh:mm',
+                addSliderAccess: true,
+                sliderAccessArgs: { touchonly: false },
+                //minDate: new Date(1970,01-1,01,00,00,0),
+                onClose: function(dateText, inst) {
+                    console.log(endDateTextBox.val());
+                    var isBookmarkedFilter;
+                    ( $('#js-bookmarkShow').hasClass('active') ) ? isBookmarkedFilter = 1 : isBookmarkedFilter = 0;  
+
+                    if ( endDateTextBox.val() != "To" && endDateTextBox.val() != '' && startDateTextBox != '')
+                    {
+                        var testStartDate = new Date(startDateTextBox.val());
+                        var testEndDate = endDateTextBox.datetimepicker('getDate');
+                        endDateTextBox.datetimepicker('option', 'minDate', testStartDate );
+                        endDateTextBox.datetimepicker('option', 'minDateTime', testStartDate );
+
+                        document.location.href = "/user.view.line.from-" + encodeURIComponent(startDateTextBox.val()) + ".to-" + encodeURIComponent(endDateTextBox.val()) + ".bookmarked-" + isBookmarkedFilter + ".phone_id-1.html";
+                    }
+                            
+                    maxDate = new Date($( startDateTextBox ).datetimepicker( "getDate"));
+                    maxDate.setDate($( startDateTextBox ).datetimepicker( "getDate").getDate()+31);
+
+                    endDateTextBox.datetimepicker('option', 'maxDate', maxDate );               
+                    },
+                onSelect: function (selectedDateTime){
+                    var testStartDate = new Date(startDateTextBox.val());
+                    endDateTextBox.datetimepicker('option', 'minDate', testStartDate );
+                    endDateTextBox.datetimepicker('option', 'minDateTime', testStartDate );
+                    //endDateTextBox.datetimepicker('option', 'maxDateTime', testStartDate ); 
+                }
+            });
+            endDateTextBox.datetimepicker({ 
+                dateFormat: 'mm/dd/yy',
+                timeFormat: 'hh:mm',
+                addSliderAccess: true,
+                sliderAccessArgs: { touchonly: false },
+                //minDate: new Date(1970,01-1,01,00,00,0),
+                onClose: function(dateText, inst) {
+                    var isBookmarkedFilter;
+                    ( $('#js-bookmarkShow').hasClass('active') ) ? isBookmarkedFilter = 1 : isBookmarkedFilter = 0;   
+
+                    if ( startDateTextBox.val() != "From" && startDateTextBox.val() != '' && endDateTextBox != '')
+                    {
+                        var testEndDate = new Date(endDateTextBox.val());
+                        startDateTextBox.datetimepicker('option', 'maxDate', testEndDate );
+                        startDateTextBox.datetimepicker('option', 'maxDateTime', testEndDate );
+                        document.location.href = "/user.view.line.from-" + encodeURIComponent(startDateTextBox.val()) + ".to-" + encodeURIComponent(endDateTextBox.val()) + ".bookmarked-" + isBookmarkedFilter + ".phone_id-1.html";
+                    }
+                    
+                    minDate = new Date( $( endDateTextBox ).datepicker( "getDate") );
+                    minDate.setDate($( endDateTextBox ).datepicker( "getDate").getDate()-31); 
+
+                    startDateTextBox.datetimepicker('option', 'minDate', minDate );                    
+                },
+                onSelect: function (selectedDateTime){
+                    var testEndDate = new Date(endDateTextBox.val());
+                    startDateTextBox.datetimepicker('option', 'maxDate', testEndDate );
+                    startDateTextBox.datetimepicker('option', 'maxDateTime', testEndDate );
+                }
+            });
+
+            $(document).on('click', '.dialog_item', function() {
+                window.location = $(this).data('chat-url');
+            });
+
+            $(document).on('click', '.title_mess .icon.star', function() {
+                var self = $(this);
+                var chatId = self.data('chat-id');
+                self.parents('.title_mess').toggleClass('bookmarked');
+                $('#dialog-item-' + chatId).toggleClass('bookmarked');
+                var is_bookmarked = + (self.parents('.title_mess').hasClass('bookmarked'));
+                jQuery.ajax(document.location.href, {
+                    'type': 'POST',
+                    'data': {'ajax': 1, 'do': 'bookmark', 'chat_id': chatId, 'bookmarked': is_bookmarked},
+                    'success': function(jxXHR, textStatus, errorThrown) {
+                        showAjaxWindowInfo('Done');
+                    },
+                    'error': function(jxXHR, textStatus, errorThrown) {
+                        showAjaxWindowInfo('Error was occured. Please, try again.');
+                        self.parents('.title_mess').toggleClass('bookmarked');
+                        $('#dialog-item-' + chatId).toggleClass('bookmarked');
+                    }
+                });
+            });
+        
+        var isBookmarkedFilter;
+        $('#js-bookmarkShow').on('click',function(){
+            ( !$(this).hasClass('active') ) ? isBookmarkedFilter = 1 : isBookmarkedFilter = 0; 
+
+
+            if ( endDateTextBox.val() != "To" && endDateTextBox.val() != '' && startDateTextBox != '')
+            {
+                document.location.href = "/user.view.line.from-" + encodeURIComponent(startDateTextBox.val()) + ".to-" + encodeURIComponent(endDateTextBox.val()) + ".bookmarked-" + isBookmarkedFilter + ".phone_id-1.html";
+            }else{
+                document.location.href = "/user.view.line.bookmarked-" + isBookmarkedFilter + ".phone_id-1.html";
+            }
+        });
+
+        $('#js-fromInput').click(function() {
+            $('#date-from').datepicker('show');
+        });
+        $('#js-toInput').click(function() {
+            $('#date-to').datepicker('show');
+        });
+
+    function updateRow(data, object) {
+        if (object) {
+            $(object).siblings('.ajax-loader').show();
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+        }
+        $.ajax({
+            type:"POST",
+            url:$settingsAjaxUrl,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+
+                    $('.ajax-loader').hide();
+                    showAjaxWindowInfo('Done');
+                }
+                if (data.result != 1) {
+                    $('.ajax-loader').hide();
+                    showAjaxWindowInfo('Error was occured! Please, try again.');
+                }
+            }
+        });
+    }
+
+    $('select').bind('change', function () {
+        if (!$(this).hasClass('noajax')) {
+            data = $(this).attr('name') + '=' + $(this).val();
+            updateRow(data, $(this));
+        }
+    });
+
+    //zoom on modal image
+    $('#js-modalPhotoWrapper').live('click',function(){ 
+            var src = this.getAttribute('src');
+            window.open(src, '_blank');     
+    });
+
+});
+</script>
+<div id="preview_box" style="display: none;" class="modal_previewPhoto">
+<div class="image_wrapper">
+<img alt="Image Preview" src="https://demo.mspy.com/skin/site/main_new/img/loading-animated.gif" id="js-modalPhotoWrapper" class="zoom_image"/>
+</div>
+</div>
+<div class="content-inner nopadding snapchat line-tracker">
+<div class="component" id="System-BlockMessages-phone.not.connected"></div>
+<h1 class="title_padding">
+<b style="float: left; font-weight:normal;">Line Tracker</b>
+<br/>
+<span class="btn-group" style="text-align: center; display: block;">
+<a href="user.view.line.phone_id-1.html" class="white-btn map " style="border-radius:2px 0 0 2px;"><i class="icon-list-alt" style="margin-left:-2px"></i> All activity log</a>
+<a href="user.view.line.phone_id-1.action-calls.html" class="white-btn map calls active" style="border-radius:0;"><i class="icon-bell" style="margin-left:-2px"></i> Calls</a>
+<a href="user.view.line.phone_id-1.action-chat.html" class="white-btn list " style="border-radius:0 2px 2px 0;margin-left:-1px;"><i class="icon-comment" style="margin-left:-2px"></i> Chats</a>
+<a href="user.view.line.phone_id-1.action-hidden_chat.html" class="white-btn list " style="border-radius:0 2px 2px 0;margin-left:-1px;"><i class="icon-comment" style="margin-left:-2px"></i> Hidden Chats</a>
+</span>
+</h1>
+<header class="title_header content_wrapper">
+<div class="left_side borderR">
+<i class="icon star " id="js-bookmarkShow" style="display: inline-block; margin: 18px 10px 0 0; vertical-align: bottom;"></i><span style="display:inline-block;">Bookmark Only</span>
+</div>
+<br style="clear:both;"/>
+</header>
+<section class="dialog_wrapper content_wrapper">
+<div class="left_side borderR">
+<div id="dialog-item-u903f006e1c3c67b08f102e2a1b2ebde7" class="dialog_item" data-chat-url="https://demo.mspy.com/user.view.line.chat_id-u903f006e1c3c67b08f102e2a1b2ebde7.phone_id-1.html">
+<i class="icon star" data-chat-id="u903f006e1c3c67b08f102e2a1b2ebde7" id="js-bookmarkShowContactList" style="float:left; margin:20px 15px 0 0;vertical-align: bottom;"></i>
+<div class="contact_name">iphone 5s</div>
+<div class="mess_time">2015-02-26 14:51:57</div>
+<br style="clear:both;"/>
+</div>
+<div id="dialog-item-u410678454699bde1e4f213538b3a750f" class="dialog_item" data-chat-url="https://demo.mspy.com/user.view.line.chat_id-u410678454699bde1e4f213538b3a750f.phone_id-1.html">
+<i class="icon star" data-chat-id="u410678454699bde1e4f213538b3a750f" id="js-bookmarkShowContactList" style="float:left; margin:20px 15px 0 0;vertical-align: bottom;"></i>
+<div class="contact_name">iphone 5s</div>
+<div class="mess_time">2015-02-26 14:51:32</div>
+<br style="clear:both;"/>
+</div>
+</div>
+<div class="right_side">
+<div class="loader" id="js-loader" style="width: 100%; display: none; height: 99px;bottom:0">
+<div class="clear"></div>
+<div id="floatingCirclesG">
+<div class="f_circleG" id="frotateG_01"></div>
+<div class="f_circleG" id="frotateG_02"></div>
+<div class="f_circleG" id="frotateG_03"></div>
+<div class="f_circleG" id="frotateG_04"></div>
+<div class="f_circleG" id="frotateG_05"></div>
+<div class="f_circleG" id="frotateG_06"></div>
+<div class="f_circleG" id="frotateG_07"></div>
+<div class="f_circleG" id="frotateG_08"></div>
+</div>
+</div>
+<div class="items_cnt" id="js-items_cnt">
+<div class="calendar_date">
+<div class="item_date">2015-03-12 14:08:51</div>
+</div>
+<div class="mess_item">
+<div class="mess_time">S4</div>
+<div class="mess_content">
+<div>
+<b>Call duration:</b> 00:00:12
+</div>
+</div>
+<br style="clear:both;"/>
+</div>
+<div class="calendar_date">
+<div class="item_date">2015-03-12 09:58:41</div>
+</div>
+<div class="mess_item">
+<div class="mess_time">S4</div>
+<div class="mess_content">
+<div>
+<b>Call duration:</b> 00:00:05
+</div>
+</div>
+<br style="clear:both;"/>
+</div>
+<div class="calendar_date">
+<div class="item_date">2015-02-18 11:06:30</div>
+</div>
+<div class="mess_item">
+<div class="mess_time">HTC One X</div>
+<div class="mess_content">
+<div>
+<b>Call duration:</b> 00:00:00
+</div>
+</div>
+<br style="clear:both;"/>
+</div>
+</div>
+</div>
+<br style="clear:both;"/>
+</section>
+</div>
+<script>
+$url = "user.view.line.phone_id-1.html";
+$settingsAjaxUrl = "user.ajax.settings.phone_id-1.html"
+</script>
+<script>
+var flag = true;
+function scrolling(){
+    if ( ($(window).scrollTop() + $(window).height() >= $(document).height() -100) && flag == true ){
+        offsetIts = document.getElementsByClassName('mess_item').length;
+        chatId = ;
+        $(document).off('scroll',scrolling);
+        getItems(offsetIts,chatId);
+    }
+}
+
+function setFalseScroll(){ flag = false;}
+
+function getItems(offsetIts,chatId) {
+    $('#js-loader').show();
+    $.ajax({
+        type:"GET",
+        url: window.location.href,
+        cache:false,
+        data: {
+                'offset' : offsetIts,
+                'chat_id' : chatId
+        },
+        dataType:"html",
+        timeout:5000,
+        success:function (data) {
+            if ( data != ""){
+                $('#js-items_cnt').append(data);
+            }else{
+                setFalseScroll();
+            }
+        },
+        error: function(){
+            showAjaxWindowInfo('Error was occured! Please, try again.'); 
+        },
+        complete:function(){
+            $('#js-loader').hide();
+            $(document).on('scroll', scrolling);
+        }
+    });
+}
+
+$(document).on('scroll', scrolling);
+</script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

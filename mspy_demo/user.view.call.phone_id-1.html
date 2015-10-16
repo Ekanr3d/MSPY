@@ -1,0 +1,722 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Call - Son Kevin</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1438869763*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1442930563*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444089600*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Son Kevin" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[1]=user.view.call; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.call.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+<form action="user.view.call.phone_id-1.html" id="filter-form" onsubmit="return submitFilterHandler(this);" method="post">
+<div id="searchbar">
+<input type="hidden" name="do[mspy_filter_show]"/>
+<input id="quick-search-input" type="text" name="mspy_filter_f1" value="" onkeypress="keyPressHandler(event)" placeholder="Search" class="noajax"/>
+<span id="search-ico"></span>
+</div>
+<div id="period">
+<div class="selectmenu-container-top inline-block">
+<select id="select-period" name="period">
+<option value="0" selected="selected">All time</option>
+<option value="1">This year</option>
+<option value="2">Two months</option>
+<option value="3">This month</option>
+<option value="4">Two weeks</option>
+<option value="5">This week</option>
+<option value="6">Today</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-from-date" class=""/>
+</div>
+<div id="dash">&ndash;</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-to-date" class=""/>
+</div>
+<input type="hidden" value="2012-09-27&nbsp;00:00" name="mspy_filter_f2" id="mspy_filter_from"/>
+<input type="hidden" value="2015-10-06&nbsp;00:00" name="mspy_filter_f3" id="mspy_filter_to"/>
+<br style="clear:both;"/>
+</div>
+<br style="clear:both;"/>
+</form>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-1.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-1.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="active">
+<a href="user.view.call.phone_id-1.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="">
+<a href="user.view.sms.phone_id-1.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.location.phone_id-1.html"> <span class="menu-item">Locations</span>
+</a> </li>
+<li class="">
+<a href="user.view.geofencing.phone_id-1.html" id="geofencing">
+<span class="menu-item tooltiped" style="max-width:98px;">Geo Fencing</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.wifinetworks.phone_id-1.html">
+<span class="menu-item">Wi-Fi Networks</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.photo.phone_id-1.html"> <span class="menu-item">Photos</span>
+</a> </li>
+<li class="">
+<a href="user.view.line.phone_id-1.html"> <span class="menu-item">Line</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a> </li>
+<li class="">
+<a href="user.view.snapchat.phone_id-1.html" id="snapchat">
+<span class="menu-item">Snapchat</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.video.phone_id-1.html"> <span class="menu-item">Video Files</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class=" disabled">
+<span class="menu-item">Telegram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class=" disabled">
+<span class="menu-item">Instagram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class="">
+<a href="user.view.browser.phone_id-1.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.email.phone_id-1.html"> <span class="menu-item">Emails</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-1.html"> <span class="menu-item">Events</span>
+</a> </li>
+<li class="">
+<a href="user.view.block_websites.phone_id-1.html"> <span class="menu-item">Block Websites</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.skype.phone_id-1.html"> <span class="menu-item">Skype</span>
+</a> </li>
+<li class="">
+<a href="user.view.whatsapp.phone_id-1.html"> <span class="menu-item">WhatsApp</span>
+</a> </li>
+<li class="">
+<a href="user.view.viber.phone_id-1.html"> <span class="menu-item">Viber</span>
+</a> </li>
+<li class="">
+<a href="user.view.social.phone_id-1.html"> <span class="menu-item">Facebook Tracking</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.apps.phone_id-1.html"> <span class="menu-item">Installed Apps</span>
+</a> </li>
+<li class="">
+<a href="user.view.keylogger.phone_id-1.html"> <span class="menu-item">Keylogger</span>
+</a> </li>
+<li class="">
+<a href="user.tool.info.phone_id-1.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewCall-main"><script type="text/javascript">
+    $config = {"config_id":"1538723","account_id":"1","config_gps":"25","config_sms":"1","config_email":"1","config_call":"1","config_call_record":"2","config_memos":"1","config_task":"1","config_event":"1","config_contact":"1","config_media":"1","config_audio":"2","config_photo":"2","config_video":"2","config_apps":"1","config_browser":"1","config_skype":"1","config_whatsapp":"1","config_viber":"1","config_keylogger":"1","config_facebook":"1","config_callrecording":"2","config_callrecording_all":"0","config_update":"20","config_debug":"0","config_debug_edate":"0000-00-00","config_recording_start":"","config_recording_end":"","config_update_sent":"0","config_command":"","config_client_offset":"-10762","config_block":"1","config_block_passwd":"","config_temporary_field":"2","config_type_connection":"1","config_line":"1"};
+    $url = "user.ajax.block_numbers.phone_id-1.html";
+</script>
+<div class="content-inner">
+<div class="component" id="System-BlockMessages-phone.not.connected"></div>
+<h1>Call Logs
+<i class="icon-info-sign tooltiped" title="In this section you can view recent logs for the last X days. To view more go to a specific section."></i>
+</h1>
+<div class="component" id="System-BlockMessages-manage_calls"></div>
+<table class="content-table" border="0" cellpadding="0" cellspacing="0">
+<colgroup>
+<col width="10%"/>
+<col width="40%"/>
+<col width="25%"/>
+<col width="25%"/>
+</colgroup>
+<tr>
+<th>TYPE&nbsp;<i class="icon-info-sign tooltiped" data-original-title="It identifies incomming and outgoing calls"></i></th>
+<th>NAME&nbsp;<i class="icon-info-sign tooltiped" data-original-title="With this name the phone number is registered in the address book"></i></th>
+<th>CALL DURATION&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Call duration format HH:MM:SS"></i></th>
+<th>CALL TIME&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Call time is indicated by local phone time"></i></th>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing call">&nbsp;</span></td>
+<td> dad
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 06:42 PM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> dad
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 05:27 PM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> dad
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 04:52 PM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> dad
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 12:07 PM</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing call">&nbsp;</span></td>
+<td> 15602225731
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 11:15 AM</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing call">&nbsp;</span></td>
+<td> 15602225731
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 11:15 AM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> 19738472057
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 11:07 AM</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing call">&nbsp;</span></td>
+<td> 19796871816
+</td>
+<td>00:00:12</td>
+<td>03/19/2011 10:57 AM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> 15602225731
+</td>
+<td>00:00:12</td>
+<td>03/19/2011 10:43 AM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> 15445725811
+</td>
+<td>00:00:12</td>
+<td>03/19/2011 10:21 AM</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing call">&nbsp;</span></td>
+<td> 18776983532
+</td>
+<td>00:00:11</td>
+<td>03/19/2011 08:49 AM</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming call">&nbsp;</span></td>
+<td> 16309697962
+</td>
+<td>00:00:10</td>
+<td>03/19/2011 07:02 AM</td>
+</tr>
+</table>
+<br/><br/>
+<p style="margin-top: 10px; padding-left: 18px;"><i style="margin:0 0 0 -18px; float:left;" class="icon-info-sign"></i>Deleted Calls might not be tracked correctly. In case the call details get deleted within 2 minutes after having been completed, they might not be fetched.</p>
+</div>
+<div class="content-inner" style="margin-top: 30px;">
+<h1>Restrict Incoming Calls <i class="icon-info-sign tooltiped" title="Incomming calls only"></i></h1>
+<div class="component" id="System-BlockMessages-command-number"></div>
+<table class="content-table commands" border="0" cellpadding="0" cellspacing="0">
+<col/>
+<col width="65"/>
+<col width="65"/>
+<tr>
+<th>&nbsp;&nbsp;Restricted phone numbers</th>
+<th class="center">Applied
+<i class="icon-info-sign tooltiped" title="'Applied' means that the command for restricting incoming calls has been successfully delivered to the target phone and will be activated on the target phone immediately"></i>
+</th>
+<th class="center">Cancel
+<i class="icon-info-sign tooltiped" title="'Cancel' option is available only in case the command has not been received yet by the target phone"></i>
+</th>
+</tr>
+<tr>
+<td>
+<strong>18005555554</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721783" onclick="canselCommand($(this)); " class="icon-remove-sign tooltiped" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<td>
+<strong>18005555556</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721784" onclick="canselCommand($(this)); " class="icon-remove-sign tooltiped" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<td>
+<strong>75008976523</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721787" onclick="canselCommand($(this)); " class="icon-remove-sign tooltiped" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td colspan="6" class="nopadding">
+<div class="">
+<form action="user.view.call.phone_id-1.html" method="post" name="sendThirdCommand">
+<input type="hidden" name="do[add_block_number]" value=""/>
+<div class="container date input-container">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="14%" style="text-align: right; padding-right: 0px;"><label for="number">Number: <b>+</b></label></td>
+<td><input maxlength="14" type="text" id="number" name="aCommand[number]" style='border: 1px solid #C0C0C0;  width: 96%;' class="noajax"/>
+</td>
+<td width="10%">
+<input type="submit" class="noajax btn btn-success" value="add" readonly='readonly' style="padding-top: 2px; padding-bottom: 2px;"/>
+</td>
+</tr>
+</table>
+</div>
+</form>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="3">
+<p style="color: #848A93;"><span style='color:#3498db;'>Please enter the phone number in the international format without '+' sign.</span> Example: 1 408 1234567 (where '1' is a country code, '408' is an area code, '1234567' is a phone number)</p>
+</td>
+</tr>
+</table>
+</div>
+<div class="content-inner" style="margin-top: 30px;">
+<h1>Settings</h1>
+<div class="hline"></div>
+Synchronization method:
+<select name="aConf[config_call]" style=" border: 1px solid #C0C0C0; width: 160px;">
+<option value="0">Don't Sync</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1" selected="selected">All Connections</option>
+</select>
+</div>
+<script>
+$url = "user.ajax.settings.phone_id-1.html";
+</script>
+<script>
+
+        $('select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                data = $(this).attr('name') + '=' + $(this).val();
+                updateRow(data, $(this));
+            }
+        });
+	function updateRow(data, object) {
+        if (object) {
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+            object.after('<img src="skin/site/main_new/img/ajax.gif" alt=""'
+            +' style="position: absolute; '+margins+'" class="ajaxLoaderInSettings" />');
+        }
+        $.ajax({
+            type:"POST",
+            url:$url,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+                    $('.ajaxLoaderInSettings').remove();
+                    object.after('<img src="skin/site/main_new/img/confirm.gif" alt=""'
+                    +' style="position: absolute; '+margins+'" class="ajaxLoaderConfirm" />');
+                    setTimeout(function(){
+                        $('.ajaxLoaderConfirm').fadeOut(function(){$(this).remove();})
+                    }, 1000)
+                }
+                /*if (data.result != 1) {
+                    alert("Something gone wrong!");
+                }*/
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+
+    function canselCommand(element){
+        var id = element.attr('rel');
+        $.ajax({
+            type: "POST",
+                    url: $url,
+                    cache: false,
+                    data: "&com_id="+id+"&ajax=1&action=canc_command",
+                    dataType: "json",
+                    timeout: 5000,
+                    success: function (data) {
+                        if(data){
+                            if(element.parent().prev().find('span').hasClass('icon-ok-sign')){
+                                element.parent().parent().remove();
+                            } else {
+                                element.parent().parent().remove();
+                            }
+                        }
+                        if(data.result == 0){
+                            alert("Something gone wrong!");
+                        }
+                    }
+        }) ;
+        $('.tooltip-inner').hide();
+        $('.tooltip-arrow').hide();
+    
+    }
+</script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

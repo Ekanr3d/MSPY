@@ -1,0 +1,781 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Wifinetworks - Son Kevin</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1438869976*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1442930776*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444089600*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Son Kevin" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[1]=user.view.wifinetworks; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.wifinetworks.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+<form action="user.view.wifinetworks.phone_id-1.html" id="filter-form" onsubmit="return submitFilterHandler(this);" method="post">
+<div id="searchbar">
+<input type="hidden" name="do[mspy_filter_show]"/>
+<input id="quick-search-input" type="text" name="mspy_filter_f1" value="" onkeypress="keyPressHandler(event)" placeholder="Search" class="noajax"/>
+<span id="search-ico"></span>
+</div>
+<div id="period">
+<div class="selectmenu-container-top inline-block">
+<select id="select-period" name="period">
+<option value="0" selected="selected">All time</option>
+<option value="1">This year</option>
+<option value="2">Two months</option>
+<option value="3">This month</option>
+<option value="4">Two weeks</option>
+<option value="5">This week</option>
+<option value="6">Today</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-from-date" class=""/>
+</div>
+<div id="dash">&ndash;</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-to-date" class=""/>
+</div>
+<input type="hidden" value="2012-09-27&nbsp;00:00" name="mspy_filter_f2" id="mspy_filter_from"/>
+<input type="hidden" value="2015-10-06&nbsp;00:00" name="mspy_filter_f3" id="mspy_filter_to"/>
+<br style="clear:both;"/>
+</div>
+<br style="clear:both;"/>
+</form>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-1.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-1.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="">
+<a href="user.view.call.phone_id-1.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="">
+<a href="user.view.sms.phone_id-1.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.location.phone_id-1.html"> <span class="menu-item">Locations</span>
+</a> </li>
+<li class="">
+<a href="user.view.geofencing.phone_id-1.html" id="geofencing">
+<span class="menu-item tooltiped" style="max-width:98px;">Geo Fencing</span>
+</a>
+</li>
+<li class="active">
+<a href="user.view.wifinetworks.phone_id-1.html">
+<span class="menu-item">Wi-Fi Networks</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.photo.phone_id-1.html"> <span class="menu-item">Photos</span>
+</a> </li>
+<li class="">
+<a href="user.view.line.phone_id-1.html"> <span class="menu-item">Line</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a> </li>
+<li class="">
+<a href="user.view.snapchat.phone_id-1.html" id="snapchat">
+<span class="menu-item">Snapchat</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.video.phone_id-1.html"> <span class="menu-item">Video Files</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class=" disabled">
+<span class="menu-item">Telegram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class=" disabled">
+<span class="menu-item">Instagram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class="">
+<a href="user.view.browser.phone_id-1.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.email.phone_id-1.html"> <span class="menu-item">Emails</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-1.html"> <span class="menu-item">Events</span>
+</a> </li>
+<li class="">
+<a href="user.view.block_websites.phone_id-1.html"> <span class="menu-item">Block Websites</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.skype.phone_id-1.html"> <span class="menu-item">Skype</span>
+</a> </li>
+<li class="">
+<a href="user.view.whatsapp.phone_id-1.html"> <span class="menu-item">WhatsApp</span>
+</a> </li>
+<li class="">
+<a href="user.view.viber.phone_id-1.html"> <span class="menu-item">Viber</span>
+</a> </li>
+<li class="">
+<a href="user.view.social.phone_id-1.html"> <span class="menu-item">Facebook Tracking</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.apps.phone_id-1.html"> <span class="menu-item">Installed Apps</span>
+</a> </li>
+<li class="">
+<a href="user.view.keylogger.phone_id-1.html"> <span class="menu-item">Keylogger</span>
+</a> </li>
+<li class="">
+<a href="user.tool.info.phone_id-1.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewWifiNetworks-main">
+<script type="text/javascript">
+
+    var dialogBox = null;
+    var googleMap = null;
+    var globalDeteFrom = '06 Oct 2015';
+    var globalDeteTo = '06 Oct 2015';
+    var markers = [];
+    
+    function switchView(el)
+    {
+        if ($(el).hasClass('map')) {
+            if (!$(el).hasClass('active')) {
+                $(el).addClass('active');
+                $('span.btn-group a.list').removeClass('active');
+                $('div#locations-list').hide();
+                $('#pager').hide();
+                //$('div#map_canvas').show();
+                $('div#map_canvas').css("display", "block");
+            }
+        } else if ($(el).hasClass('list')) {
+            if (!$(el).hasClass('active')) {
+                $(el).addClass('active');
+                $('span.btn-group a.map').removeClass('active');
+                $('#map_canvas').css("display", "none");
+                $('div#map_canvas').hide();
+                $('div#locations-list').show();
+                $('#pager').show();
+            }
+        }
+    }
+
+
+$(function() {
+        $( "#from_date" ).datepicker({
+            dateFormat: 'M dd, yy',
+            onSelect: function(dateText, inst) {
+                $( "#to_date" ).datepicker("option", "minDate", new Date(dateText));
+            }
+
+        });
+        $( "#to_date" ).datepicker({
+            dateFormat: 'M dd, yy',
+            onSelect: function(dateText, inst) {
+                $( "#from_date" ).datepicker("option", "maxDate", new Date(dateText));
+            }
+        });
+    });
+    $(document).ready(function() {
+        var display = $("#map_canvas").css("display");
+        if (display == "block")
+        {
+            if ($(".list").hasClass('active'))
+            {
+                $("div#map_canvas").css("display", 'none');
+                $('div#map_canvas').hide();
+            }
+            else
+            {
+                $('#pager').hide();
+            	$("div#map_canvas").css("display", 'block');
+           	 	$('div#locations-list').hide();
+            }
+        }
+    });
+
+</script>
+<div class="content-inner no-side-padding location">
+<input type="hidden" value="" id="marker_points"/>
+<div class="component" id="System-BlockMessages-phone.not.connected"></div>
+<h1 style="text-align: center; padding: 10px 0px;">
+<b style="float: left;">Wi-Fi Networks</b>
+<span class="btn-group" style="margin-left: -90px;">
+<a href="#" class="white-btn map active" onclick="switchView(this);" style="border-radius:2px 0 0 2px;"><i class="icon-map-marker" style="margin-left:-2px:"></i> Map View</a>
+<a href="#" class="white-btn list " onclick="switchView(this);" style="border-radius:0 2px 2px 0;"><i class="icon-tasks" style="margin-left:-2px"></i> Wi-Fi List</a>
+</span>
+</h1>
+<div id="map_canvas" class="googlemap" style="width: 100%; height: 600px; position:center;"></div>
+<div class="component" id="System-BlockMessages-manage_locations"></div>
+<div id="locations-list" style="display: none; padding:0 22px;">
+<table class="content-table" border="0" cellpadding="0" cellspacing="0" width="100%">
+<colgroup>
+<col width="35%"/>
+<col width="10%"/>
+<col width="15%"/>
+<col width="15%"/>
+<col width="10%"/>
+<col width="15%"/>
+</colgroup>
+<tr>
+<th>Locations&nbsp;<i class="icon-info-sign tooltiped" data-original-title="The location of Wi-Fi spot."></i></th>
+<th>TYPE&nbsp;<i class="icon-info-sign tooltiped" data-original-title="The type of Internet connection"></i></th>
+<th>NAME</th>
+<th>TIME&nbsp;<i class="icon-info-sign tooltiped" data-original-title="The time when the Internet connection was established."></i></th>
+<th>Duration&nbsp;<i class="icon-info-sign tooltiped" data-original-title="The length of time the device was connected to the Internet."></i></th>
+<th>Block&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Block Wi-Fi network to prevent the target device from connecting to it."></i></th>
+</tr>
+<tr id="1" class="hovered" onclick="popupGMap(38.88086457911446,-77.00158107910158,'Open','kredenscafe','cafe111','10/04/2013 11:30 AM','11:30:27','0','1','Virginia Avenue Southeast, Washington, DC 20003, USA');">
+<td>Virginia Avenue Southeast, Washington, DC 20003, USA</td>
+<td>Open</td>
+<td>
+kredenscafe
+&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Password: cafe111"></i>
+</td>
+<td>10/04/2013 11:30 AM</td>
+<td>11:30:27</td>
+<td><span class="switch switch-danger" data-id="1"></span></td>
+</tr>
+<tr id="2" class="hovered" onclick="popupGMap(38.889683630536915,-77.12277401123049,'WPA','mywifi','wifi405690','10/04/2013 11:30 AM','5:30:07','1','2','1624 North Buchanan Street, Arlington, VA 22207, USA');">
+<td>1624 North Buchanan Street, Arlington, VA 22207, USA</td>
+<td>WPA</td>
+<td>
+mywifi
+&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Password: wifi405690"></i>
+</td>
+<td>10/04/2013 11:30 AM</td>
+<td>5:30:07</td>
+<td><span class="switch switch-danger on " data-id="2"></span></td>
+</tr>
+<tr id="2" class="hovered" onclick="popupGMap(38.85119246361415,-77.05891597900393,'WPA2','sweethome','452415786','10/04/2013 11:30 AM','0:15:33','1','2','728 25th Street South, Arlington, VA 22202, USA');">
+<td>728 25th Street South, Arlington, VA 22202, USA</td>
+<td>WPA2</td>
+<td>
+sweethome
+&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Password: 452415786"></i>
+</td>
+<td>10/04/2013 11:30 AM</td>
+<td>0:15:33</td>
+<td><span class="switch switch-danger on " data-id="2"></span></td>
+</tr>
+<tr id="2" class="hovered" onclick="popupGMap(38.82953202365677,-76.99780452880862,'WPA2','fly-wifi','fly-fly-fly','10/04/2013 11:30 AM','0:43:11','0','2','616 Chesapeake Street Southeast, Washington, DC 20032, USA');">
+<td>616 Chesapeake Street Southeast, Washington, DC 20032, USA</td>
+<td>WPA2</td>
+<td>
+fly-wifi
+&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Password: fly-fly-fly"></i>
+</td>
+<td>10/04/2013 11:30 AM</td>
+<td>0:43:11</td>
+<td><span class="switch switch-danger" data-id="2"></span></td>
+</tr>
+<tr id="2" class="hovered" onclick="popupGMap(38.779768286059166,-77.0081042114258,'Open','murakami-wifi','4542189','10/04/2013 11:30 AM','1:21:57','0','2','River Mist Drive, Fort Washington, MD 20744, USA');">
+<td>River Mist Drive, Fort Washington, MD 20744, USA</td>
+<td>Open</td>
+<td>
+murakami-wifi
+&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Password: 4542189"></i>
+</td>
+<td>10/04/2013 11:30 AM</td>
+<td>1:21:57</td>
+<td><span class="switch switch-danger" data-id="2"></span></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="content-inner" style="margin-top: 30px;">
+<h1>Settings</h1>
+<div class="hline"></div>
+Synchronization method:
+<select name="aConf[wifi_networks]" style=" border: 1px solid #C0C0C0; width: 160px;">
+<option value="0" selected="selected">Don't Sync</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</div>
+<script>
+$url_settings = "user.ajax.settings.html";
+$url_block = "user.view.wifinetworks.html";
+</script>
+<script>
+        $('select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                data = $(this).attr('name') + '=' + $(this).val();
+                updateRow(data, $(this));
+            }
+        });
+	function updateRow(data, object) {
+        if (object) {
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+            object.after('<img src="skin/site/main_new/img/ajax.gif" alt=""'
+            +' style="position: absolute; '+margins+'" class="ajaxLoaderInSettings" />');
+        }
+        $.ajax({
+            type:"POST",
+            url:$url_settings,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+                    $('.ajaxLoaderInSettings').remove();
+                    object.after('<img src="skin/site/main_new/img/confirm.gif" alt=""'
+                    +' style="position: absolute; '+margins+'" class="ajaxLoaderConfirm" />');
+                    setTimeout(function(){
+                        $('.ajaxLoaderConfirm').fadeOut(function(){$(this).remove();})
+                    }, 1000)
+                }
+                /*if (data.result != 1) {
+                    alert("Something gone wrong!");
+                }*/
+            }
+        });
+    }
+
+    function doBlockUnblock(networkid, state, operation,maps) {
+        var tmpMarker;
+
+        showAjaxWindowInfo('Done');
+
+        if( operation != 'switch' ) {
+            $('.switch[data-id="'+networkid+'"]').toggleClass('on');
+        }
+        else {
+            $('#map_canvas .switch[data-id="'+networkid+'"]').toggleClass('on');
+        }
+
+        if(maps instanceof Array){
+            for(var i = 0; i<=maps.length; i++){
+                maps[i].blockUnblockMarker(networkid,state);
+            }
+        }
+        else {
+            maps.blockUnblockMarker(networkid,state);
+        }
+
+    }
+
+</script>
+<script>
+
+
+$(document).ready(function(){
+    dialogBox = $('<div id="map_dialog" style="width:800px; height:600px"><\/div>').dialog({autoOpen:false, width: $(window).width() - 400, height: $(window).height() - 150});
+
+    $fromTime = $('#search_filter_from').val();
+    $toTime = $('#search_filter_to').val();
+});
+	
+function getLocations (dateFrom, dateTo) {
+    var pointsList = null;
+     $markers = new Array;
+    
+                                    $markers.push({
+                    location_latitude:38.88086457911446,
+                    location_longitude:-77.00158107910158,
+                    address:"Virginia Avenue Southeast, Washington, DC 20003, USA",
+                    id:"1",
+                    block:"0",
+                    additional_info:{
+                            type:"Open",
+                            start:"10/04/2013 11:30 AM",
+                            name:"kredenscafe",
+                            duration:"11:30:27",
+                            password:"cafe111"
+                    },
+                });
+                                                $markers.push({
+                    location_latitude:38.889683630536915,
+                    location_longitude:-77.12277401123049,
+                    address:"1624 North Buchanan Street, Arlington, VA 22207, USA",
+                    id:"2",
+                    block:"1",
+                    additional_info:{
+                            type:"WPA",
+                            start:"10/04/2013 11:30 AM",
+                            name:"mywifi",
+                            duration:"5:30:07",
+                            password:"wifi405690"
+                    },
+                });
+                                                $markers.push({
+                    location_latitude:38.85119246361415,
+                    location_longitude:-77.05891597900393,
+                    address:"728 25th Street South, Arlington, VA 22202, USA",
+                    id:"2",
+                    block:"1",
+                    additional_info:{
+                            type:"WPA2",
+                            start:"10/04/2013 11:30 AM",
+                            name:"sweethome",
+                            duration:"0:15:33",
+                            password:"452415786"
+                    },
+                });
+                                                $markers.push({
+                    location_latitude:38.82953202365677,
+                    location_longitude:-76.99780452880862,
+                    address:"616 Chesapeake Street Southeast, Washington, DC 20032, USA",
+                    id:"2",
+                    block:"0",
+                    additional_info:{
+                            type:"WPA2",
+                            start:"10/04/2013 11:30 AM",
+                            name:"fly-wifi",
+                            duration:"0:43:11",
+                            password:"fly-fly-fly"
+                    },
+                });
+                                                $markers.push({
+                    location_latitude:38.779768286059166,
+                    location_longitude:-77.0081042114258,
+                    address:"River Mist Drive, Fort Washington, MD 20744, USA",
+                    id:"2",
+                    block:"0",
+                    additional_info:{
+                            type:"Open",
+                            start:"10/04/2013 11:30 AM",
+                            name:"murakami-wifi",
+                            duration:"1:21:57",
+                            password:"4542189"
+                    },
+                });
+                        
+
+    return $markers;
+}
+
+
+</script>
+<script type="text/javascript" src="../mspy_demo_js/leaflet.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/leaflet-cluster.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/module-map.js"></script>
+
+<script type="text/javascript" src="../mspy_demo_js/wifi-networks.js"></script></div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

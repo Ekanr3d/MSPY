@@ -1,0 +1,634 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Screenshots - Alice-Pc</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1409740370*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439104862*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443165662*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Alice-Pc" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[3]=user.view.screenshotsdesktop; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="active tooltiped" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.screenshotsdesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.dashboard.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li style="margin-bottom:15px;" class="">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="menu-item">Dashboard</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.keylogger_desktop.phone_id-3.html" id="keylogger_desktop">
+<span class="menu-item">Keylogger</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.launched_apps_desktop.phone_id-3.html" id="launched_apps_desktop">
+<span class="menu-item">Application Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.usersactivity.phone_id-3.html" id="usersactivity">
+<span class="menu-item">User Activity</span>
+</a>
+</li>
+<li class="active">
+<a href="user.view.screenshotsdesktop.phone_id-3.html" id="screenshotsdesktop">
+<span class="menu-item">Screenshots</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.desktop_apps.phone_id-3.html" id="desktop_apps">
+<span class="menu-item tooltiped">Installed Apps</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.webmaildesktop.phone_id-3.html" id="webmail">
+<span class="menu-item tooltiped">Webmail</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.tool.infodesktop.phone_id-3.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewScreenshotsDesktop-main"><script>
+    $url = "user.ajax.screenshotsdesktop.html";
+    var modalTop,modalLeft;
+    var countItems;
+</script>
+<script type="text/javascript">
+    $(function() {
+        //fate filters
+        var dLastWeek = new Date(1443770462*1000);
+        var startDateTextBox = $('#date-from');
+        var endDateTextBox = $('#date-to');
+        var maxDate, minDate;
+
+            startDateTextBox.datetimepicker({ 
+                dateFormat: 'mm/dd/yy',
+                timeFormat: 'hh:mm',
+                addSliderAccess: true,
+                sliderAccessArgs: { touchonly: false },
+                minDate: new Date(1970,01-1,01,00,00,0),
+                onClose: function(dateText, inst) {
+                    if (endDateTextBox.val() != '') {
+                        alert('Not available in demo!');
+                        }
+                        
+                maxDate = new Date($( startDateTextBox ).datetimepicker( "getDate"));
+                maxDate.setDate($( startDateTextBox ).datetimepicker( "getDate").getDate()+31);
+
+                endDateTextBox.datetimepicker('option', 'maxDate', maxDate );               
+                },
+                onSelect: function (selectedDateTime){
+                    var testStartDate = startDateTextBox.datetimepicker('getDate');
+                    var testEndDate = endDateTextBox.datetimepicker('getDate');
+                    endDateTextBox.datetimepicker('option', 'minDate', testStartDate );
+                    endDateTextBox.datetimepicker('option', 'minDateTime', testStartDate );
+                    endDateTextBox.datetimepicker('option', 'maxDateTime', testStartDate ); 
+                }
+            });
+            endDateTextBox.datetimepicker({ 
+                dateFormat: 'mm/dd/yy',
+                timeFormat: 'hh:mm',
+                addSliderAccess: true,
+                sliderAccessArgs: { touchonly: false },
+                minDate: new Date(1970,01-1,01,00,00,0),
+                onClose: function(dateText, inst) {
+                    if (startDateTextBox.val() != '') {
+                        alert('Not available in demo!');
+                    }
+                    
+                    minDate = new Date( $( endDateTextBox ).datepicker( "getDate") );
+                    minDate.setDate($( endDateTextBox ).datepicker( "getDate").getDate()-31); 
+
+                    startDateTextBox.datetimepicker('option', 'minDate', minDate );                    
+                },
+                onSelect: function (selectedDateTime){
+                    var testEndDate = endDateTextBox.datetimepicker('getDate');
+                    startDateTextBox.datetimepicker('option', 'maxDate', endDateTextBox.datetimepicker('getDate') );
+                    startDateTextBox.datetimepicker('option', 'minDateTime', testEndDate );
+                }
+            });
+
+        //modal windows
+        var photoBox = $('#preview_box')
+        .dialog({
+            autoOpen:false,
+            height:630,
+            width: 1024,
+            modal:true,
+            close: function(){
+                    var image = $('img', '#preview_box .image_wrapper');
+                    image.attr('src','/skin/site/main_new/img/loading-animated.gif');
+                    image.css('width','auto');
+                },
+            open: function(){
+                modalTop = $('.ui-dialog').css('top');
+                modalLeft = $('.ui-dialog').css('left');
+            }
+        });
+
+        $('.modalPreview').live('click',function(){
+            var filename = $(this).attr('rel');
+            var titleModal_app = $(this).data('app'),
+                titleModal_time = $(this).data('time'),
+                itemId = $(this).parent().data('id');
+            var image = $('img', '#preview_box .image_wrapper');
+            image.attr('src',filename);
+            image.attr('alt',filename);
+            image.attr('padding','0');
+            //$('#js-modalPhotoWrapper').css('width','1024px');
+            $(photoBox).dialog("option", "title",titleModal_app+ '<span class="title_time">'+titleModal_time+'</span><div class="ctrl_btns" data-id="'+itemId+'"><i class="icon star tooltiped" id="js-modalBookmarkShow" title="Add/Remove from bookmarks">&nbsp;</i><i class="icon ico_delete tooltiped active" id="js-modalDelete" data-rel="screenshot" title="Delete item(s)">&nbsp;</i></div>');
+
+            $(photoBox).dialog("open");
+            $('.ui-widget-overlay').css({
+                'height': $(document).height() + 'px'
+            });
+        });
+    });
+</script>
+<div id="preview_box" style="display: none;" class="modal_previewPhoto">
+<div class="image_wrapper"> 
+<img alt="Image Preview" src="img/loading-animated.gif" id="js-modalPhotoWrapper" class="zoom_image"/>
+</div>
+ 
+</div>
+<div class="content-inner nopadding">
+<h1 class="title_padding" style="padding-bottom:0;">Screenshots</h1>
+<p class="title_padding" style="padding-top:0;">The computer screenshots will be made every chosen interval (every 5 minutes by default).</p>
+<div class="inner_wrapper" id="js-innerWrapper">
+ 
+<div class="wrapper_block left_block" id="js-leftBlock">
+<div class="loader" id="js-loader" style="display:block;">
+<div id="floatingCirclesG">
+<div class="f_circleG" id="frotateG_01"></div>
+<div class="f_circleG" id="frotateG_02"></div>
+<div class="f_circleG" id="frotateG_03"></div>
+<div class="f_circleG" id="frotateG_04"></div>
+<div class="f_circleG" id="frotateG_05"></div>
+<div class="f_circleG" id="frotateG_06"></div>
+<div class="f_circleG" id="frotateG_07"></div>
+<div class="f_circleG" id="frotateG_08"></div>
+</div>
+</div>
+<div class="title">
+<div class="module left_module ctrl_btns">
+ 
+<i class="icon ico_delete tooltiped" id="js-delete" data-rel="screenshot" title="Delete item(s)">&nbsp;</i>
+</div>
+<div class="module central_module total_count">
+</div>
+<div class="module right_module select_all">
+<label for="checkbox_all">All&nbsp;&nbsp;<input type="checkbox" id="checkbox_all"/></label>
+</div>
+</div>
+<div class="content_wrapper" id="js-contentWrapper">
+<div class="item bookmarked" data-id="1"> 
+<img src="img/Excel.jpg" alt="Screenshot" data-time="10/09/15  7:19 AM" data-app="Excel" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Excel.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 7:19 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+ 
+<div class="item bookmarked" data-id="1">
+<img src="img/Evernote.jpg" alt="Screenshot" data-time="10/09/15  7:12 AM" data-app="Evernote" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Evernote.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 7:12 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+ 
+<div class="item" data-id="1">
+<img src="img/Chrome.jpg" alt="Screenshot" data-time="10/09/15  6:56 AM" data-app="Chrome" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Chrome.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 6:56 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+ 
+<div class="item" data-id="1">
+<img src="img/Firefox.jpg" alt="Screenshot" data-time="10/09/15  6:39 AM" data-app="Firefox" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Firefox.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 6:39 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+ 
+<div class="item" data-id="1">
+<img src="img/Word.jpg" alt="Screenshot" data-time="10/09/15  6:26 AM" data-app="Word" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Word.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 6:26 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+ 
+<div class="item" data-id="1">
+<img src="img/Player.jpg" alt="Screenshot" data-time="10/09/15  6:17 AM" data-app="Player" class="modalPreview" rel="/skin/site/main_new/img/screenshots/Player.jpg">
+<div class="info">
+<div class="module left_module">10/09/15 6:17 AM</div>
+<div class="module right_module"><input type="checkbox" class="selectCheckbox" data-id="1"/></div>
+</div>
+<div class="bookmark">
+<i class="icon star"></i>
+</div>
+</div>
+  </div>
+<div class="clear"></div>
+</div>
+<div class="loader" id="js-loader2" style="width: 540px; display: none; height: 99px;bottom:0">
+<div class="clear"></div>
+<div id="floatingCirclesG">
+<div class="f_circleG" id="frotateG_01"></div>
+<div class="f_circleG" id="frotateG_02"></div>
+<div class="f_circleG" id="frotateG_03"></div>
+<div class="f_circleG" id="frotateG_04"></div>
+<div class="f_circleG" id="frotateG_05"></div>
+<div class="f_circleG" id="frotateG_06"></div>
+<div class="f_circleG" id="frotateG_07"></div>
+<div class="f_circleG" id="frotateG_08"></div>
+</div>
+</div>
+ 
+<div class="wrapper_block right_block" id="js-rightBlock">
+<div class="title">
+<div class="module left_module">
+<span class="filter_title">Filters</span>
+</div>
+<div class="module right_module">
+<a id="js-clearFilters" class="grey-btn" data-rel="screenshot" href="javascript:void(0);">Clear</a>
+</div>
+</div>
+<div class="filters_wrapper" id="js-filtersWrapper">
+<div class="filter_group">
+<div class="caption">User:</div>
+<select id="js-userSelect">
+<option value="0">All</option>
+<option value="5">Alice</option>
+</select>
+</div>
+<div class="filter_group">
+<div class="caption">Period:</div>
+<div class="filter_group_date">
+<div class="input-container wrapper_input rowInput">
+<input type="text" id="date-from" readonly='readonly' value="" placeholder="From"/>
+<div class="clear"></div>
+</div>
+<div class="input-container wrapper_input rowInput">
+<input type="text" id="date-to" readonly='readonly' value="" placeholder="To"/>
+<div class="clear"></div>
+</div>
+<div class="clear"></div>
+</div>
+</div>
+<div class="filter_group">
+<i class="icon star" id="js-bookmarkShow"></i><span>Bookmark Only</span>
+</div>
+<div class="filter_group">
+<div class="caption">Applications</div>
+<select id="js-appFilter">
+<option value="0">All</option>
+<option value="0">Skype</option>
+<option value="1">Evernote</option>
+<option value="2">MS Word 2011</option>
+<option value="3">MS Excel</option>
+<option value="4">Windows Media Player</option>
+<option value="5">Firefox</option>
+<option value="6">Chrome</option>
+</select>
+</div>
+</div>
+<div class="clear"></div>
+</div>
+<div class="clear"></div>
+</div> 
+</div>
+<script type="text/javascript" src="../mspy_demo_js/filtersPage.js"></script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

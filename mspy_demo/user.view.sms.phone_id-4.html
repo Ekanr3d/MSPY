@@ -1,0 +1,754 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - SMS - Kev non-jail</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439115856*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443176656*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Kev non-jail" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[4]=user.view.sms; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="active tooltiped" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.sms.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+<form action="user.view.sms.phone_id-4.html" id="filter-form" onsubmit="return submitFilterHandler(this);" method="post">
+<div id="searchbar">
+<input type="hidden" name="do[mspy_filter_show]"/>
+<input id="quick-search-input" type="text" name="mspy_filter_f1" value="" onkeypress="keyPressHandler(event)" placeholder="Search" class="noajax"/>
+<span id="search-ico"></span>
+</div>
+<div id="period">
+<div class="selectmenu-container-top inline-block">
+<select id="select-period" name="period">
+<option value="0" selected="selected">All time</option>
+<option value="1">This year</option>
+<option value="2">Two months</option>
+<option value="3">This month</option>
+<option value="4">Two weeks</option>
+<option value="5">This week</option>
+<option value="6">Today</option>
+<option value="custom">Custom</option>
+</select>
+</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-from-date" class=""/>
+</div>
+<div id="dash">&ndash;</div>
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" id="filter-to-date" class=""/>
+</div>
+<input type="hidden" value="2012-09-27&nbsp;00:00" name="mspy_filter_f2" id="mspy_filter_from"/>
+<input type="hidden" value="2015-10-09&nbsp;00:00" name="mspy_filter_f3" id="mspy_filter_to"/>
+<br style="clear:both;"/>
+</div>
+<br style="clear:both;"/>
+</form>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-4.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-4.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="">
+<a href="user.view.call.phone_id-4.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="active">
+<a href="user.view.sms.phone_id-4.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.browser.phone_id-4.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-4.html"> <span class="menu-item">Events</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.memo.phone_id-4.html"> <span class="menu-item">Notes</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.tool.info.phone_id-4.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewSms-main">
+<script type="text/javascript">
+ function upgradeSubscriptionHandler() {
+        var checkboxes = document.upgradeForm.elements['phone[]'];
+        var isAnyOneChecked = false;
+
+        if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+            for (i = 0; i < checkboxes.length ; i++) {
+                if (checkboxes[i].checked) {
+                    isAnyOneChecked = true;
+                    break;
+                }
+            }
+        } else if (checkboxes.checked) {
+            isAnyOneChecked = true;
+        }
+
+        if (isAnyOneChecked) {
+            document.upgradeForm.submit();
+        } else {
+            alert('Please, select phone number before extending subscription!');
+        }
+    }
+    function showText(elNum) {
+        $("#sms-" + elNum).dialog("open");
+        $("#sms-" + elNum).dialog("option", "title", 'Message Details');
+    }
+    $(function() {
+        $("#from_date").datepicker({
+            dateFormat: 'M dd, yy',
+            onSelect: function(dateText, inst) {
+                $("#to_date").datepicker("option", "minDate", new Date(dateText));
+            }
+
+        });
+        $("#to_date").datepicker({
+            dateFormat: 'M dd, yy',
+            onSelect: function(dateText, inst) {
+                $("#from_date").datepicker("option", "maxDate", new Date(dateText));
+            }
+        });
+        $('div[id^=sms-]').dialog({modal: true, autoOpen: false, width: 600});
+    });
+</script>
+<div class="content-inner">
+<div class="component" id="System-BlockMessages-phone.not.connected"></div>
+<h1>SMS
+<i class="icon-info-sign tooltiped" title="All texts are tracked despite the language of the message"></i>
+</h1>
+<div class="component" id="System-BlockMessages-manage_smses"></div>
+<table class="content-table" border="0" cellpadding="0" cellspacing="0">
+<col width="10%"/>
+<col width="20%"/>
+<col width="50%"/>
+<col width="20%"/>
+<tr>
+<th>TYPE&nbsp;<i class="icon-info-sign tooltiped" data-original-title="It identifies incomming and outgoing messages"></i></th>
+<th>NAME&nbsp;<i class="icon-info-sign tooltiped" data-original-title="With this name the phone number is registered in the address book"></i></th>
+<th>MESSAGE&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Click on the message to read full text"></i></th>
+<th>TIME&nbsp;<i class="icon-info-sign tooltiped" data-original-title="Message time is indicated by local phone time"></i></th>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> 16549864151
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(0);">
+Haha radioactive superpower cancerous druggy
+</a>
+<div style="display: none;" class="dialog-content" id="sms-0">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">Haha radioactive superpower cancerous druggy</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 08:59 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> 16549864151
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(1);">
+cheer was... interesting... :P feel better
+</a>
+<div style="display: none;" class="dialog-content" id="sms-1">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">cheer was... interesting... :P feel better</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 08:52 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> 19738472057
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(2);">
+Coming to me? be treated
+</a>
+<div style="display: none;" class="dialog-content" id="sms-2">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">Coming to me? be treated </div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 01:52 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> mom
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(3);">
+take me away!
+</a>
+<div style="display: none;" class="dialog-content" id="sms-3">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">take me away!</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:57 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> Laura Rigney
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(4);">
+STOP RAPING MY WALL
+</a>
+<div style="display: none;" class="dialog-content" id="sms-4">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">STOP RAPING MY WALL</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:55 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> 18776983532
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(5);">
+10Q see ya
+</a>
+<div style="display: none;" class="dialog-content" id="sms-5">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">10Q see ya</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:38 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> Gogo Ktty
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(6);">
+:'(
+</a>
+<div style="display: none;" class="dialog-content" id="sms-6">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">:'(</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:33 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> Gogo Ktty
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(7);">
+so cute. Rest In Peace, Knut.
+</a>
+<div style="display: none;" class="dialog-content" id="sms-7">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">so cute. Rest In Peace, Knut.</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:30 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> 18776983532
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(8);">
+Date agreed, Mon 7pm
+</a>
+<div style="display: none;" class="dialog-content" id="sms-8">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">Date agreed, Mon 7pm</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:30 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> Gogo Ktty
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(9);">
+Knuts a polarbear from gemany he dead with only 3 jears :(
+</a>
+<div style="display: none;" class="dialog-content" id="sms-9">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">Knuts a polarbear from gemany he dead with only 3 jears :(</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:25 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> 12403346874
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(10);">
+u know me)
+</a>
+<div style="display: none;" class="dialog-content" id="sms-10">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">u know me)</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:14 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> 12403346874
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(11);">
+SLAP;)
+</a>
+<div style="display: none;" class="dialog-content" id="sms-11">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">SLAP;)</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:11 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> dad
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(12);">
+miss? I will wear u out
+</a>
+<div style="display: none;" class="dialog-content" id="sms-12">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">miss? I will wear u out </div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:09 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> Gogo Ktty
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(13);">
+whos knut
+</a>
+<div style="display: none;" class="dialog-content" id="sms-13">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">whos knut</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 12:07 PM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico outgoing tooltiped" data-placement="bottom" title="Outgoing SMS">&nbsp;</span></td>
+<td> Dave Kent
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(14);">
+Wooo! New video up!
+</a>
+<div style="display: none;" class="dialog-content" id="sms-14">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">Wooo! New video up!</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 10:27 AM</span>
+</td>
+</tr>
+<tr>
+<td><span class="ico incoming tooltiped" data-placement="bottom" title="Incoming SMS">&nbsp;</span></td>
+<td> Dave Kent
+</td>
+<td class="breakword">
+<a href="javascript:void(0);" onclick="showText(15);">
+U'R DOING IT WRONG.
+</a>
+<div style="display: none;" class="dialog-content" id="sms-15">
+<div class="hline">&nbsp;</div>
+<div class="sms-text">U'R DOING IT WRONG.</div>
+</div>
+</td>
+<td><span class="nowrap">03/19/2015 10:15 AM</span>
+</td>
+</tr>
+</table>
+<p style="margin-top: 10px; padding-left: 18px;"><i style="margin:0 0 0 -18px; float:left;" class="icon-info-sign"></i>Internal messages (BBM, etc.), messages sent via 3rd party SMS clients are not tracked</p>
+</div>
+<script>
+$url = "https://demo.mspy.com/user.ajax.settings.phone_id-4.html";
+</script>
+<script>
+
+        $('select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                data = $(this).attr('name') + '=' + $(this).val();
+                updateRow(data, $(this));
+            }
+        });
+	function updateRow(data, object) {
+        if (object) {
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+            object.after('<img src="skin/site/main_new/img/ajax.gif" alt=""'
+            +' style="position: absolute; '+margins+'" class="ajaxLoaderInSettings" />');
+        }
+        $.ajax({
+            type:"POST",
+            url:$url,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+                    $('.ajaxLoaderInSettings').remove();
+                    object.after('<img src="skin/site/main_new/img/confirm.gif" alt=""'
+                    +' style="position: absolute; '+margins+'" class="ajaxLoaderConfirm" />');
+                    setTimeout(function(){
+                        $('.ajaxLoaderConfirm').fadeOut(function(){$(this).remove();})
+                    }, 1000)
+                }
+                /*if (data.result != 1) {
+                    alert("Something gone wrong!");
+                }*/
+            }
+        });
+    }
+</script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

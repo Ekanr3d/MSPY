@@ -1,0 +1,1383 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Info - Son Kevin</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1438871498*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1442932298*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444089600*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Son Kevin" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[1]=user.tool.info; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.tool.info.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-1.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-1.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="">
+<a href="user.view.call.phone_id-1.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="">
+<a href="user.view.sms.phone_id-1.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.location.phone_id-1.html"> <span class="menu-item">Locations</span>
+</a> </li>
+<li class="">
+<a href="user.view.geofencing.phone_id-1.html" id="geofencing">
+<span class="menu-item tooltiped" style="max-width:98px;">Geo Fencing</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.wifinetworks.phone_id-1.html">
+<span class="menu-item">Wi-Fi Networks</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.photo.phone_id-1.html"> <span class="menu-item">Photos</span>
+</a> </li>
+<li class="">
+<a href="user.view.line.phone_id-1.html"> <span class="menu-item">Line</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a> </li>
+<li class="">
+<a href="user.view.snapchat.phone_id-1.html" id="snapchat">
+<span class="menu-item">Snapchat</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.video.phone_id-1.html"> <span class="menu-item">Video Files</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class=" disabled">
+<span class="menu-item">Telegram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class=" disabled">
+<span class="menu-item">Instagram</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">soon!</i>
+</span>
+</li>
+<li class="">
+<a href="user.view.browser.phone_id-1.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.email.phone_id-1.html"> <span class="menu-item">Emails</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-1.html"> <span class="menu-item">Events</span>
+</a> </li>
+<li class="">
+<a href="user.view.block_websites.phone_id-1.html"> <span class="menu-item">Block Websites</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+<li class="">
+<a href="user.view.skype.phone_id-1.html"> <span class="menu-item">Skype</span>
+</a> </li>
+<li class="">
+<a href="user.view.whatsapp.phone_id-1.html"> <span class="menu-item">WhatsApp</span>
+</a> </li>
+<li class="">
+<a href="user.view.viber.phone_id-1.html"> <span class="menu-item">Viber</span>
+</a> </li>
+<li class="">
+<a href="user.view.social.phone_id-1.html"> <span class="menu-item">Facebook Tracking</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.apps.phone_id-1.html"> <span class="menu-item">Installed Apps</span>
+</a> </li>
+<li class="">
+<a href="user.view.keylogger.phone_id-1.html"> <span class="menu-item">Keylogger</span>
+</a> </li>
+<li class="active">
+<a href="user.tool.info.phone_id-1.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-Settings-main">
+<script type="text/javascript">
+    $config = {"config_id":"1538723","account_id":"1","config_gps":"0","config_sms":"0","config_email":"0","config_call":"0","config_call_record":"0","config_memos":"0","config_task":"0","config_event":"0","config_contact":"0","config_media":"1","config_audio":"0","config_photo":"0","config_video":"0","config_apps":"0","config_browser":"0","config_skype":"0","config_whatsapp":"0","config_viber":"0","config_keylogger":"0","config_facebook":"0","config_callrecording":"0","config_callrecording_all":"0","config_update":"60","config_debug":"0","config_debug_edate":"0000-00-00","config_recording_start":"","config_recording_end":"","config_update_sent":"0","config_command":"","config_client_offset":"-10762","config_block":"0","config_block_passwd":"","config_temporary_field":"2","config_type_connection":"0","config_line":"0"};
+    $url = "user.ajax.settings.phone_id-1.html";
+    var head_modal2 = "Phone Wipeout" ;
+    var head_modal1 = "Unlink current device" ;
+    var head_modal3 = "Stop Tracking the Target Phone" ;
+    var head_modal4 = "Change the Target Phone" ;
+    var head_modal5 = "Clear Logs" ;
+    
+</script>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.jqplot.css" type="text/css"/>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jquery.jqplot.js"></script>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jqplot.pieRenderer.min.js"></script>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jqplot.donutRenderer.min.js"></script>
+<script type="text/javascript">
+function upgradeSubscriptionHandler(account_type) {
+		if (account_type != "demo")
+		{
+	        var checkboxes = document.upgradeForm.elements['phone[]'];
+	        var isAnyOneChecked = false;
+	
+	        if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+	            for (i = 0; i < checkboxes.length ; i++) {
+	                if (checkboxes[i].checked) {
+	                    isAnyOneChecked = true;
+	                    break;
+	                }
+	            }
+	        } else if (checkboxes.checked) {
+	            isAnyOneChecked = true;
+	        }
+	
+	        if (isAnyOneChecked) {
+	            document.upgradeForm.submit();
+	        } else {
+	            alert('Please, select phone number before extending subscription!');
+	        }
+		}
+		else
+		{
+			alert("Not available in demo");
+		}
+    }
+
+        $(document).ready(function() {
+        //hide command notes
+        setTimeout(function(){
+           $('#System-BlockMessages-command-block, #System-BlockMessages-url-command, #System-BlockMessages-command-number, #System-BlockMessages-command-recordnumber').hide();
+        },5000);
+        
+        
+        
+        $("#date-from").datetimepicker({
+            dateFormat:'yy-mm-dd',
+            timeFormat:'hh:mm',
+            //alwaysSetTime: false,
+            separator:' ',
+            minDate: new Date(2015,10-1,06,11,32+2,0),
+            onSelect:function (dateText, inst) {
+                $("#date-to").datetimepicker("option", "minDate", dateText);
+            },
+            addSliderAccess:true,
+            sliderAccessArgs:{ touchonly:false }
+});
+        $("#date-to").datetimepicker({
+            dateFormat:'yy-mm-dd',
+            timeFormat:'hh:mm',
+            separator:' ',
+            minDate: new Date(2015,10-1,06,11,32+2,0),
+            onSelect:function (dateText, inst) {
+                $("#date-from").datetimepicker("option", "maxDate", dateText);
+            },
+            addSliderAccess:true,
+            sliderAccessArgs:{ touchonly:false }
+});
+
+
+
+    /*document.getElementById("date_l").innerHTML = document.getElementById("filter-to-date").value;
+         document.getElementById("time_l").innerHTML = document.getElementById("filter-to-time").value;*/
+});
+
+/*function selectCommandHandler(el){
+
+    if ('start_recording' == el.value) {
+        document.getElementById('to-time-container').style.display = "inline-block";
+        document.getElementById('from-time-container').style.display = "inline-block";
+    } else {
+        document.getElementById('to-time-container').style.display = "none";
+        document.getElementById('from-time-container').style.display = "none";
+    }
+}*/
+function submitCommandHandler(id) {
+    var $form = $("#" + id);
+
+
+    $form.find('input[name="aCommand[command_scheduler_stime]"]').attr("value", document.getElementById('date-from').value);
+    $form.find('input[name="aCommand[command_scheduler_etime]"]').attr("value", document.getElementById('date-to').value);
+    console.log($form.find('input[name="aCommand[command_scheduler_stime]"]').attr("value"));
+    $form.submit();
+
+
+
+}
+/* functions for export files*/
+function showExportForm()
+{
+    $("#logs_export").dialog("open");
+    $("#logs_export").dialog("option", "title", 'Export Logs');
+}
+$(function() {
+    $('#logs_export').dialog({modal: true, autoOpen: false, width: 400});
+});
+
+function logExportInformation(account_id)
+{
+    var checkbox_value = "";
+    
+    $("input[name='export_logs']").each(function(){
+        if ($(this).attr("checked")){
+                checkbox_value = $(this).val();
+        }
+    });
+
+    if (checkbox_value == "")
+    {
+        alert("You must select the type of file to export");
+        return false;
+    }
+    else
+    {
+        var url = "/user.download.format-" + checkbox_value + ".phone_id-" + account_id + ".html"; 
+        document.location.href = url + "?export=all";
+        
+        $("input[name='export_logs']").each(function(){
+            $(this).attr("checked", false);
+        });
+        $('#logs_export').css('display', 'none');
+        $('#logs_export').dialog('close');
+        return true;
+    }
+}
+
+$(document).ready(function() {
+    
+    $( "#from-date-clear-logs" ).datepicker({
+        dateFormat: 'yy-mm-dd ',
+        maxDate: "+0d",
+        //minDate: new Date(1348704000*1000),    
+        onSelect: function(dateText, inst) {
+            $("#to-date-clear-logs").datepicker("option", "minDate", dateText);
+            //setCustom();
+        },
+        beforeShow: function(input, inst) { clearTimeout(submitTimeout); }
+    });
+    
+    $( "#to-date-clear-logs" ).datepicker({
+        dateFormat: 'yy-mm-dd',
+        maxDate: "+0d",
+        //minDate: $("#from-date-clear-logs").val(),
+        onSelect: function(dateText, inst) {
+            //$("#to-date-clear-logs").datepicker("option", "maxDate", dateText);
+        //    setCustom();
+        },
+        beforeShow: function(input, inst) { clearTimeout(submitTimeout); }
+    });
+});
+</script>
+ 
+<div class="content-inner v2 phonemanag_page">
+<h1>Phone Management</h1>
+<table class="table_wrapper mobile" cellpadding="50">
+<tr>
+<td>
+<div class="phoneSettingsLeftCol">
+<h1>Phone Information</h1>
+<table class="content-table">
+<tr>
+<th><h3>Battery charge:</h3></th>
+<td>
+27%
+</td>
+</tr>
+<tr>
+<th><h3>Phone is rooted:</h3></th>
+<td>
+Yes
+</td>
+</tr>
+<tr>
+<th><h3 style="text-transform:none;">mSpy version:</h3></th>
+<td>
+4.12.0
+</td>
+</tr>
+<tr>
+<th><h3>Last updated time:</h3></th>
+<td>
+06/05/2013 12:26 PM
+</td>
+</tr>
+<tr>
+<th><h3>Phone name:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap"><input type="text" name="aPhone[account_alias]" id="phone-label" style="width:60%; border: 1px solid #c0c0c0;" value="Son Kevin">
+<a href="#" title="e.g.: 'My son's phone'" class="icon-info-sign tooltiped" data-placement="top" onclick="return false;">&nbsp;</a>
+</td>
+</tr><tr>
+<th><h3>Phone Number:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap"><input type="text" name="aPhone[account_phone]" style="width: 60%; border: 1px solid #c0c0c0;" id="phonenumber-label" value="1-234-555-34-12">
+<a href="#" title='You can enter phone number' class="icon-info-sign tooltiped" data-placement="top" onclick="return false;">&nbsp;</a> &nbsp;<span class="optional_field">*optional</span>
+</td>
+</tr>
+<tr>
+<th><h3>Platform:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap">
+<img src="img/android-logo.png" alt="" style="margin-top: 2px; display: inline-block; vertical-align: top;"/>
+Android </td>
+</tr>
+<tr>
+<th><h3>Subscribed until:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap">
+<form action="user.tool.upgradesubscription.html" method="post" name="upgradeForm">
+<input class="ph" type="radio" name="phone[]" value="1" checked='checked' style="position: absolute; left: -9999px;"/>
+12/31/2019 12:00 AM
+</form>
+</td>
+</tr>
+<tr>
+<th>&nbsp;</th>
+<td>
+</td>
+</tr>
+</table>
+<br style="clear:both;">
+</div>
+</td>
+<td class="noBorder">
+<div class="charts">
+<div style="margin-left: 0px; float: left; width: 50%;height: 232px;">
+<h4>Internal memory</h4>
+<div id="chart1" style="height: 220px; position: relative; width: 105%;"></div>
+<br style="clear:both;">
+</div>
+<div style="margin-left: 0px; float: left; width: 50%;height: 232px;">
+<h4>SD memory</h4>
+<div id="chart2" style="height: 220px; position: relative; width: 105%;"></div>
+<br style="clear:both;">
+</div>
+<div class="about-phone">
+<p>
+<span>Available internet connection<i class="icon-info-sign tooltiped" title="List of available target phone internet connections" style="margin-top: 2px;"></i>:</span>
+<img src="img/wifi.png" alt="WiFi" style="display: inline-block; vertical-align: top;"/> <br/>
+</p>
+<p>
+<span>Operator name:</span>&nbsp;<b>AT&amp;T</b> </p>
+<p>
+<span>Device ID:</span>&nbsp;<b>000944053297654</b>
+</p>
+<p>
+<span>Phone model:</span>&nbsp;<b>GT-I9100</b>
+</p>
+</div>
+<br style="clear:both;">
+</div>
+</td>
+</tr>
+</table>
+<br/>
+<div class="phone_settings_controls">
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Wipe out all data from the target phone" href="#" onclick="showWipePhoneWindow('demo');">Wipe Phone
+</a>
+<div style="display: none;" class="dialog-content" id="wipe_phone_modal_window">
+<div>
+This action deletes all photos, videos, SMS, contacts, events, call logs and emails from the target phone.<br/><br/>
+<img src="img/ico-atention.png" alt="warning"/> WARNING! Wiping your phone is irreversible!<br/><br/>
+</div>
+<div>
+<label><input id="ckecbox_wipe_phone" type="checkbox" value="1" onclick="showButtonWipePhone();">&nbsp;I understand that all the target phone data will be completely removed and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display:inline-block;" id="wipe_phone_button" style="margin-left: 0;" type="button" value="Wipe Phone" onclick="sendWipePhone('user.tool.phone_id-1.action-wipephone.html'); return false;" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_wipe_phone" type="button" value="Cancel" onclick="$('#wipe_phone_modal_window').css('display', 'none');$('#wipe_phone_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Block Application" href="#" onclick="showStopAppModalWindow('demo');">Stop App
+</a>
+<div style="display: none;" class="dialog-content" id="stop_app_modal_window">
+<div>
+This action prevents the app from running on the target phone. You will be able to unblock it by sending an undetectable SMS.<br/><br/>
+</div>
+<div>
+<label><input id="ckecbox_stop_app" type="checkbox" value="1" onclick="showButtonStopApp();">&nbsp; I understand that all logs will be cleared from my Control Panel and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display:inline-block;" id="stop_app_button" style="margin-left: 0;" type="button" value="Stop App" onclick="sendStopApp('user.tool.phone_id-1.action-uninstall.html'); return false;" class="btn  btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_stop_app" type="button" value="Cancel" onclick="$('#stop_app_modal_window').css('display', 'none');$('#stop_app_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Unlink current device" href="#" onclick="reinstallApplication(1, 'demo'); ">
+Unlink current device
+</a>
+<div style="display: none;" class="dialog-content" id="logs_export_for_remove">
+<div>
+After this action mSpy will no longer be able to send logs from the current target device. If you wish to monitor another phone, you will need to install mSpy app on it first.<br/><br/>
+</div>
+<div class="logs_export_text" style="text-align: center;margin-bottom: 10px;width: 436px;">
+<label><input type="radio" name="logs_export_for_remove" value="pdf">Export Logs PDF</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="logs_export_for_remove" value="xls">Export Logs XLS</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="logs_export_for_remove" value="csv">Export Logs CSV</label>
+</div>
+<div>
+<br/>
+<label><input id="ckecbox_remove" type="checkbox" value="1" onclick="showButtonRemove();">&nbsp; I understand that all logs will be cleared from my Control Panel and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="export_and_remove_logs" style="margin-left: 0;" type="button" value="Export and delete current logs" onclick="logExportInformationForRemove(1); return false;" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="remove_logs" type="button" value="Delete current logs" onclick="canselLogExportInformation(1); return false;" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_for_remove" type="button" value="Cancel" onclick="$('#logs_export_for_remove').css('display', 'none');$('#logs_export_for_remove').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Delete the target phone logs " href="#" onclick="showClearLogsModalWindow('demo');">
+Clear Logs
+</a>
+<div style="display: none;" class="dialog-content" id="clear_logs_modal_window">
+<form action="user.tool.phone_id-1.action-clear_logs.html" method="POST" id="form_clear_logs">
+<div>
+<label><input type="radio" name="type_clear_logs" value="all" onclick="disabledClearlogsField();">All logs</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="type_clear_logs" value="defined" onclick="undisabledClearlogsField();">Selected logs</label>&nbsp;&nbsp;&nbsp;
+</div>
+<br/>
+From:
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" name="from_date" id="from-date-clear-logs" class=""/>
+</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+To:
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" name="to_date" id="to-date-clear-logs" class=""/>
+</div>
+<br/><br/>
+<div class="div_clear_log1">
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="sms">&nbsp;SMS</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="location">&nbsp;Locations</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="event">&nbsp;Events</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="apps">&nbsp;Installed App(s)</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="video">&nbsp;Videos</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="callrecording">&nbsp;Call Recordings</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="skype_messages">&nbsp;Skype</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="facebook">&nbsp;Facebook</label><br/>
+</div>
+<div class="div_clear_log2">
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="call">&nbsp;Calls</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="contact">&nbsp;Contacts</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="history">&nbsp;Browsing History</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="photo">&nbsp;Photos</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="recording">&nbsp;Recordings</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="email">&nbsp;Emails</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="whatsapp_messages">&nbsp;Whatsapp</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="viber">&nbsp;Viber</label><br/>
+</div>
+<div class="clear_from">
+<br/>
+<label><input id="ckecbox_clear_logs" type="checkbox" value="1" onclick="showButtonClearLogs();">&nbsp;I understand that all or selected logs will be deleted from my Control Panel and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="clear_logs_button" style="margin-left: 0;" type="button" value="Clear Logs" onclick="sendClearLogs();" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_clear_logs" type="button" value="Cancel" onclick="$('#clear_logs_modal_window').css('display', 'none');$('#clear_logs_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</form>
+</div>
+ 
+<a data-placement="top" class="grey-btn tooltiped" title="Keep current logs" href="#" onclick="showChangePhoneModalWindow('demo');">
+Keep current logs
+</a>
+<div style="display: none;" class="dialog-content" id="change_phone_modal_window">
+<div>
+This action will remove mSpy app from the current target phone. Choose one of the Export options below if you would like to keep the log file. If you wish to monitor another phone, you will need to install mSpy app on it first.<br/><br/>
+</div>
+<div style="clear:left;">
+<br/>
+<label><input id="ckecbox_change_phone" type="checkbox" value="1" onclick="showButtonChangePhone();">&nbsp;I understand that I won’t be able to track the current target phone and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="button_change_phone" style="margin-left: 0;" type="button" value="Keep current logs" onclick="sendChangePhone('user.tool.phone_id-1.action-change_phone.html');" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_change_phone" type="button" value="Cancel" onclick="$('#change_phone_modal_window').css('display', 'none');$('#change_phone_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="grey-btn tooltiped" title="Export Logs" href="javascript:void(0);" onclick="showExportForm(); return false;">
+Export Logs
+</a>
+<div style="display: none;" class="dialog-content" id="logs_export">
+<div>
+Choose one of the Export options below if you would like to keep the log file from the target phone.<br/><br/>
+</div>
+<div class="logs_export_text">
+<label><input type="radio" name="export_logs" value="pdf">Export Logs PDF</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="export_logs" value="xls">Export Logs XLS</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="export_logs" value="csv">Export Logs CSV</label>
+</div>
+<div style="text-align: center; margin-top: 50px;">
+<input type="hidden" id="change_phone_button" value="0">
+<input style="display: inline-block;" style="margin-left: 0;" type="button" value="Export Logs" onclick="logExportInformation(1); return false;" class="btn btn-danger">
+<input style="display:inline-block;" id="cansel_button" type="button" value="Cancel" onclick="$('#logs_export').css('display', 'none');$('#logs_export').dialog('close');" class="btn btn-success">
+</div>
+</div>
+<br style="clear:both;">
+</div>
+</div>
+<div class="phone-settings">
+<h1>Phone Settings</h1>
+<p style="color: #3498DB;font-size:12px;">All changes made on the web panel will be applied in N minutes. N minutes equal one update interval.</p><br>
+<table class="content-table" style="width: 100%;">
+<tr>
+<th width="">
+<h3><label for="update">Update Interval:</label>
+<i class="icon-info-sign tooltiped" title="Choose update interval for all data except locations"></i>
+</h3></th>
+<td width="" class="timeContainer">
+<div class="input-time-container">
+<input type="text" id="update" name="aConf[config_update]" value="60" style="background: none; margin-top: 4px;" class="intervalz"/>
+</div>
+</td>
+<th width="">
+<h3>Location Update Interval:
+ 
+</h3></th>
+<td width="" class="timeContainer">
+<div class="input-time-container">
+<input class="intervalz" type="text" id="gps" style="background: none; margin-top: 4px;" name="aConf[config_gps]" disabled="disabled"/>
+</div>
+</td>
+<th width=""><h3>Locations:</h3></th>
+<td width="" class="timeContainer">
+<select id="AllowGps" name="aConf[config_gps]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+</tr>
+<tr>
+<th><h3>Call logs:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_call]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Browser History :</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_browser]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Installed Apps:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_apps]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+</tr>
+<tr>
+<th><h3>SMS:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_sms]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Address Book:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_contact]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>E-mails:</h3></th>
+<td style="padding: 0 6px;;">
+<select name="aConf[config_email]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+</tr>
+<tr>
+<th><h3>Events:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_event]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Photos:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_photo]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Videos:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_video]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+</tr>
+<tr>
+<th><h3>Skype:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_skype]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>WhatsApp:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_whatsapp]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th><h3>Viber:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_viber]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+</tr>
+<tr>
+<th><h3>Facebook:</h3></th>
+<td style="padding: 0 6px;">
+<select name="aConf[config_facebook]" style="float: left; border: 1px solid #C0C0C0; width: auto;">
+<option value="0" selected="selected">Off</option>
+<option value="2">Wi-Fi Only</option>
+<option value="1">All Connections</option>
+</select>
+</td>
+<th>&nbsp;</th>
+<td style="padding: 0 6px;">
+&nbsp;
+</td>
+<th>&nbsp;</th>
+<td style="padding: 0 6px;">
+&nbsp;
+</td>
+</tr>
+</table>
+<p>Wi-Fi is usually used when there's no data plan on the target device or it's too expensive.If you have WI-Fi enabled all checked logs will be uploaded once the phone appears in Wi-Fi area. Please note that no data will be lost. mSpy will collect the logs and upload them once there's a connection.</p>
+<p>'All Connections' means Cellular Internet and Wi-Fi. If there is a signal from both connections the first priority is always set to Wi-Fi connection.</p>
+</div>
+<div class="bottom-blocks-setting">
+<div>
+<div class="block" style="margin-right:35px;">
+<h1>Block Websites</h1>
+<div class="component" id="System-BlockMessages-url-command"></div>
+<table class="content-table commands max-width-210" border="0" cellpadding="0" cellspacing="0">
+<col/>
+<col width="59"/>
+<col width="55"/>
+<tr>
+<th>&nbsp;&nbsp;Blocked Websites</th>
+<th class="center" width="65">Applied&nbsp;<i class="icon-info-sign tooltiped" title="'Applied' means that the command for blocking (URL/Incomming Calls) has been successfully delivered to the target phone and will be activated on the target phone immediately"></i></th>
+<th class="center" width="65">Cancel&nbsp;<i class="icon-info-sign tooltiped" title="'Cancel' option is available only in case the command has not been received yet by the target phone"></i></th>
+</tr>
+<tr>
+<td>
+<strong>facebook.com</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721785" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock Url">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td>
+<strong>xxx.com</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721786" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock Url">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td>
+<strong>google.com</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721788" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock Url">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td colspan="6" class="nopadding">
+<div class="">
+<form action="user.tool.info.phone_id-1.html" method="post" name="sendBlockUrlCommand">
+<input type="hidden" name="do[add_block_url]" value=""/>
+<div class="container date input-container" id='from-time-container-3'>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="20%" style="text-align: right; padding-right: 0px;direction:ltr;"><label for="url-input">http(s)://</label></td>
+<td><input type="text" id="url-input" name="aCommand[url]" style='border: 1px solid #dadcde; width: 60%; height: 17px;margin-elft: -1px;' class="noajax"/>
+<input type="submit" class="noajax grey-btn" value="add" readonly='readonly'/>
+</td>
+</tr>
+</table>
+</div>
+</form>
+</div>
+</td>
+</tr>
+</table>
+<p style="color: #848A93;font-size:11px;">This feature blocks all webpages on the website. For example, if you enter 'example.com' website all relative pages such as www.example.com/page1.html will be blocked as well</p>
+</div>
+<div class="block">
+<h1>Restrict Incoming Calls <i class="icon-info-sign tooltiped" title="Incomming calls only"></i></h1>
+<div class="component" id="System-BlockMessages-command-number"></div>
+<table class="content-table commands" border="0" cellpadding="0" cellspacing="0">
+<col/>
+<col width="65"/>
+<col width="65"/>
+<tr>
+<th>&nbsp;&nbsp;Restricted phone numbers</th>
+<th class="center">Applied
+<i class="icon-info-sign tooltiped" title="'Applied' means that the command for restricting incoming calls has been successfully delivered to the target phone and will be activated on the target phone immediately"></i>
+</th>
+<th class="center">Cancel
+<i class="icon-info-sign tooltiped" title="'Cancel' option is available only in case the command has not been received yet by the target phone"></i>
+</th>
+</tr>
+<tr>
+<td>
+<strong>18005555554</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721783" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td>
+<strong>18005555556</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721784" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td>
+<strong>75008976523</strong>
+</td>
+<td class="center">
+<span class="icon-ban-circle" title="Applied">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721787" onclick="canselCommand($(this)); " class="icon-remove-sign" title="Unblock number">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td colspan="6" class="nopadding">
+<div class="">
+<form action="user.tool.info.phone_id-1.html" method="post" name="sendThirdCommand">
+<input type="hidden" name="do[add_block_number]" value=""/>
+<div class="container date input-container">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="21%" style="text-align: right; padding-right: 0px;"><label for="number">Number: <b>+</b></label></td>
+<td><input maxlength="14" type="text" id="number" name="aCommand[number]" style='border: 1px solid #dadcde;  width: 60%; height:17px;' class="noajax filter-numbers"/>
+<input type="submit" class="noajax grey-btn" value="add" readonly='readonly'/>
+</td>
+</tr>
+</table>
+</div>
+</form>
+</div>
+</td>
+</tr>
+</table>
+<p style="color: #848A93;font-size:11px;line-height:13px"><span style='color:#3498db;'>Please enter the phone number in the international format without '+' sign.</span> Example: 1 408 1234567 (where '1' is a country code, '408' is an area code, '1234567' is a phone number)</p>
+</div>
+<br style="clear:both;"/>
+</div>
+<div class="block width100">
+<h1>Block Phone By Time</h1>
+<div class="component" id="System-BlockMessages-command-block"></div>
+<table class="content-table commands" border="0" cellpadding="0" cellspacing="0">
+<col/>
+<col width="65"/>
+<col width="85"/>
+<col width="65"/>
+<tr>
+<th style="font-size:9px;">Defined Blocking Periods</th>
+<th class="center" width="85">Applied
+<i class="icon-info-sign tooltiped" title="'Applied' means that the command for blocking target phone by time has been successfully delivered and will be activated immediately"></i>
+</th>
+<th class="center" width="85">Completed
+<i class="icon-info-sign tooltiped" title="'Complete' confirms that the target phone has been blocked for the time period scheduled"></i>
+</th>
+<th class="center" width="85">Cancel
+<i class="icon-info-sign tooltiped" title="'Cancel' option is available only in case the command has not been received yet by the target phone"></i>
+</th>
+</tr>
+<tr>
+<td>
+<strong>Block Phone By Time</strong>
+<i class="icon-time tooltiped" title=" 10/16/2012 06:01 PM&nbsp;&ndash;&nbsp;12/26/2012 06:01 PM"></i>
+<i class="icon-info-sign tooltiped" title="Unlock password: 7e9dddff7244230db9852d875579d191"></i>
+</td>
+<td class="center">
+<span class="icon-ban-circle tooltiped" title="No Applied">&nbsp;</span>
+</td>
+<td class="center">
+<span class="icon-ban-circle tooltiped" title="No Completed">&nbsp;</span>
+</td>
+<td class="center">
+<a rel="7721789" onclick="if (confirm('Are you sure you want to cancel this command? It will not be executed on the phone.')){canselCommand($(this))}; return false;" class="icon-remove-sign" title="Cancel">&nbsp;</a>
+</td>
+</tr>
+<tr>
+<td colspan="6" class="nopadding" background="#ffffff">
+<div class="">
+<form action="user.tool.info.phone_id-1.html" method="post" name="sendCommand" id="sendCommand">
+<input type="hidden" name="aCommand[command_scheduler_stime]" value=""/>
+<input type="hidden" name="aCommand[command_scheduler_etime]" value=""/>
+<input type="hidden" name="aCommand['command_scheduler_command']" value="block"/>
+<input type="hidden" name="do[add_block_phone]" value=""/>
+<div class="container date input-container" id='from-time-container'>
+<table border="0" cellpadding="0" cellspacing="0" width="55%">
+<tr>
+<td style="text-align: right;"><label for="date-from">From:</label></td>
+<td><input class="noajax" type="text" id="date-from" style=' border: 1px solid #dadcde;  width: 100%;'/></td>
+<td style="text-align: right;"><label for="date-to">
+&nbsp;&nbsp;&nbsp;To:</label></td>
+<td><input class="noajax" type="text" id="date-to" readonly='readonly' style=' border: 1px solid #dadcde; width: 100%;'/></td>
+<td width="10">
+</td>
+<td>
+<input class="noajax grey-btn" type="submit" id="submit" value="add" readonly='readonly' style="border-radius:2px;" onclick="submitCommandHandler('sendCommand'); return false;"/>
+</td>
+</tr>
+</table>
+</div>
+</form>
+</div>
+</td>
+</tr>
+</table>
+<p style="color:#3498DB;padding-bottom:5px;">
+Local phone time: 10/06/2015 11:32 AM
+</p>
+<p style="color: #848A93;">
+Make sure blocking periods considering local phone time
+</p>
+</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#AllowGps').bind('change', function(){
+        gpsSwitcherChangeHandler($(this));
+    });
+});
+
+function gpsSwitcherChangeHandler(el) {
+    if (el.val()=='1') {
+        $('input#gps').attr('readonly', false).val('1').focus();
+        $('input#gps').attr('disabled', false);
+    } else {
+        $('input#gps').attr('readonly', 'readonly').val('');
+        $('input#gps').attr('disabled', 'disabled');
+    }
+}
+/*]]>*/
+</script>
+<script type="text/javascript">
+    function strpos(haystack, needle, offset) {
+        var i = (haystack + '').indexOf(needle, (offset || 0));
+        return i === -1 ? false : i;
+    }
+
+
+    function canselCommand(element){
+        var id = element.attr('rel');
+        $.ajax({
+            type: "POST",
+                    url: $url,
+                    cache: false,
+                    data: "&com_id="+id+"&ajax=1&action=canc_command",
+                    dataType: "json",
+                    timeout: 5000,
+                    success: function (data) {
+                        if(data){
+                            if(element.parent().prev().find('span').hasClass('icon-ok-sign')){
+                                element.parent().parent().remove();
+                            } else {
+                                element.parent().parent().remove();
+                            }
+                        }
+                        if(data.result == 0){
+                            alert("Something gone wrong!");
+                        }
+                    }
+        }) ;
+        $('.tooltip-inner').hide();
+        $('.tooltip-arrow').hide();
+    
+    }
+    
+    function BeforeSend(){
+        $(".wifi-only").each(function(){
+            var $this = $(this);
+            if ($this.attr("value") == 2) {
+                var $name = $this.attr("name");
+                var $left_pos = strpos($name, "[");
+                var $right_pos = strpos($name, "]");
+                var $key = $name.substr($left_pos + 1, ($right_pos - $left_pos - 1));
+                document.getElementById("aConfig")['aConf[' + $key + ']'].value = 2;
+            }
+
+        })
+        return true;
+    }
+
+    $(document).ready(function () {
+        $('input[type="text"], select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                data = $(this).attr('name') + '=' + $(this).val();
+                updateRow(data, $(this));
+            }
+        });
+        
+        if ($('#callRecordingInput').val() == 'XT907' && $('#callRecordings').val() != 0)
+        {
+        	var data = 'aConf[config_callrecording]=0';
+        	updateRow(data, $('#callRecordings'));
+        	
+        	setTimeout(function(){
+        		$('#callRecordings').attr('disabled', 'disabled');
+        	}, 1500);
+        }
+    });
+
+    function updateRow(data, object) {
+        
+        if (object) {
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+            if ($('#callRecordingInput').val() != 'XT907')
+        	{
+            	object.after('<img src="skin/site/main_new/img/ajax.gif" alt=""'
+            	+' style="position: absolute; '+margins+'" class="ajaxLoaderInSettings" />');
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:$url,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+                    $('.ajaxLoaderInSettings').remove();
+                    
+                    if ($('#callRecordingInput').val() != 'XT907')
+        			{
+        				object.after('<img src="skin/site/main_new/img/confirm.gif" alt=""'
+                    	+' style="position: absolute; '+margins+'" class="ajaxLoaderConfirm" />');
+                    }
+                    setTimeout(function(){
+                        $('.ajaxLoaderConfirm').fadeOut(function(){$(this).remove();})
+                    }, 1000)
+                }
+                /*if (data.result != 1) {
+                    alert("Something gone wrong!");
+                }*/
+            }
+        });
+    }
+</script>
+<script>
+                                $(document).ready(function(){
+                                    var data1 = [
+                                    ['Occupied Space, '+(parseInt(2015) - parseInt(1685))+' Mb', parseInt(2015)-parseInt(1685)],
+                                    ['Free Space,'+1685+'Mb', 1685]
+                                    ];
+                                    var data2 = [
+                                    ['Occupied Space, '+(parseInt(11781) - parseInt(4657))+' Mb', parseInt(11781)-parseInt(4657)],
+                                    ['Free Space,'+4657+'Mb', 4657]
+                                    ];
+
+                                if (parseInt(20151)!=1){
+                                    var plot1 = jQuery.jqplot('chart1', [data1],
+                                    {
+                                        seriesDefaults:{
+                                            renderer:jQuery.jqplot.PieRenderer,
+                                            rendererOptions:{
+                                                showDataLabels:true
+                                            }
+                                        },
+                                        seriesColors:['#dadcde', '#3498DB'],
+                                        legend:{ show:true, location:'s', showSwatch:true },
+                                        series: [{shadow: false}]
+                                    }
+                            );
+                        } else {
+                            $('#chart1').prev().html('');
+                            $('#chart2').hide().prev().hide();
+                        }
+            
+                                if (parseInt(117811)!=1){
+                            var plot2 = jQuery.jqplot('chart2', [data2],
+                                    {
+                                        seriesDefaults:{
+                                            renderer:jQuery.jqplot.PieRenderer,
+                                            rendererOptions:{
+                                                showDataLabels:true
+                                            }
+                                        },
+                                        seriesColors:['#dadcde', '#33c1a5'],
+                                        legend:{ show:true, location:'s', showSwatch:true },
+                                        series: [{shadow: false}]
+                                    }
+                            );
+                        } else {
+                            $('#chart2').hide().prev().hide();
+                        }
+            
+                        
+                        });
+                        </script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

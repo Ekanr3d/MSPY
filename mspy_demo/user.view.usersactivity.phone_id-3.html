@@ -1,0 +1,535 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Users Activity - Alice-Pc</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1409740370*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439104823*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443165623*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','http://www.mspy.com/buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Alice-Pc" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[3]=user.view.usersactivity; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="active tooltiped" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.usersactivity.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.dashboard.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li style="margin-bottom:15px;" class="">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="menu-item">Dashboard</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.keylogger_desktop.phone_id-3.html" id="keylogger_desktop">
+<span class="menu-item">Keylogger</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.launched_apps_desktop.phone_id-3.html" id="launched_apps_desktop">
+<span class="menu-item">Application Activity</span>
+</a>
+</li>
+<li class="active">
+<a href="user.view.usersactivity.phone_id-3.html" id="usersactivity">
+<span class="menu-item">User Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.screenshotsdesktop.phone_id-3.html" id="screenshotsdesktop">
+<span class="menu-item">Screenshots</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.desktop_apps.phone_id-3.html" id="desktop_apps">
+<span class="menu-item tooltiped">Installed Apps</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.webmaildesktop.phone_id-3.html" id="webmail">
+<span class="menu-item tooltiped">Webmail</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.tool.infodesktop.phone_id-3.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewUsersActivity-main"><script>
+    $url = "user.ajax.usersactivity.phone_id-3.html";
+</script>
+<script src="../mspy_demo_js/highcharts.js"></script>
+<script src="../mspy_demo_js/exporting.js"></script>
+<script src="../mspy_demo_js/highcharts-more.js"></script>
+<script>
+var aFeatures = [];
+
+  $(function() {
+    $( "#js-hoursSlider" ).slider({
+      range: true,
+      min: 0,
+      max: 24,
+      values: [ 0, 24 ],
+      change: function( event, ui ) {
+            $('#js-rangeStartHours').val(ui.values[0]);
+            $('#js-rangeEndHours').val(ui.values[1]);
+            drawColumngraph();
+      }
+    });
+
+    var startDateTextBox = $('#date-from');
+    var endDateTextBox = $('#date-to');
+    var dLastWeek = new Date(1443770423*1000);
+    var maxDate, minDate;
+
+    $( startDateTextBox ).datepicker({
+        dateFormat: 'mm/dd/yy',
+        onSelect: function(dateText, inst) {
+            $( endDateTextBox ).datepicker("option", "minDate", $( startDateTextBox ).val());
+            $( "#js-rangeStartDays" ).val( $( startDateTextBox ).datepicker( "getDate") );
+        },
+        onClose:function(){
+            maxDate = new Date($( startDateTextBox ).datepicker( "getDate"));
+            maxDate.setDate($( startDateTextBox ).datepicker( "getDate").getDate()+31); 
+
+            $( "#js-rangeStartDays" ).val( $( startDateTextBox ).datepicker( "getDate") );
+            $( endDateTextBox ).datetimepicker('option', 'maxDate', maxDate );
+            alert('Not available in demo!');
+        }
+    });
+
+    $( endDateTextBox ).datepicker({
+        dateFormat: 'mm/dd/yy',
+        onSelect: function(dateText, inst) {
+            $( startDateTextBox ).datepicker("option", "maxDate", $( endDateTextBox ).val());
+            $( "#js-rangeEndDays" ).val( $( endDateTextBox ).datepicker( "getDate") );
+        },
+        onClose:function(){
+            minDate = new Date( $( endDateTextBox ).datepicker( "getDate") );
+            minDate.setDate($( endDateTextBox ).datepicker( "getDate").getDate()-31); 
+
+            $( "#js-rangeEndDays" ).val( $( endDateTextBox ).datepicker( "getDate") );
+            $( startDateTextBox ).datetimepicker('option', 'minDate', minDate );
+            alert('Not available in demo!');
+        }
+    });
+
+    $( startDateTextBox ).datepicker( "setDate", dLastWeek);
+    $( endDateTextBox ).datepicker( "setDate", new Date());
+
+    $( "#js-rangeStartDays" ).val( $( startDateTextBox ).datepicker( "getDate") );
+    $( "#js-rangeEndDays" ).val( $( endDateTextBox ).datepicker( "getDate") );
+
+    $( startDateTextBox ).datepicker("option", "maxDate", $( endDateTextBox ).val());
+    $( endDateTextBox ).datepicker("option", "minDate", $( startDateTextBox ).val());
+  });
+  </script>
+<div class="content-inner nopadding user-activity">
+<div class="loader" id="js-loader" style="display:block;">
+<div id="floatingCirclesG">
+<div class="f_circleG" id="frotateG_01"></div>
+<div class="f_circleG" id="frotateG_02"></div>
+<div class="f_circleG" id="frotateG_03"></div>
+<div class="f_circleG" id="frotateG_04"></div>
+<div class="f_circleG" id="frotateG_05"></div>
+<div class="f_circleG" id="frotateG_06"></div>
+<div class="f_circleG" id="frotateG_07"></div>
+<div class="f_circleG" id="frotateG_08"></div>
+</div>
+</div>
+<h1 class="title_padding" style="padding-bottom:0;">User Activity</h1>
+<p class="title_padding" style="padding-top:0;">You will see when the user was active (mouse clicks, typed text), and find out when the user was inactive.</p>
+<div class="module-wrapper gray_bg">
+<form class="form_wrapper" action="/" method="" style="float:left;">
+<div class="filters_wrapper pside-0 pb-20">
+<label for="js-userSelect" class="label alignRight">User:</label>
+<form>
+<select id="js-userSelect">
+<option value="5" selected>Alice</option>
+</select>
+<input type="hidden" id="js-rangeStartHours" value="0"/>
+<input type="hidden" id="js-rangeEndHours" value="24"/>
+<input type="hidden" id="js-rangeStartDays" value=""/>
+<input type="hidden" id="js-rangeEndDays" value=""/>
+<input type="hidden" id="js-user" value=""/>
+</form>
+</div>
+<div class="pb-20">
+<div class="input-container wrapper_input" style="display:inline-block;">
+<label class="label alignRight">Date Period:</label>
+</div>
+<div class="datepicker-container inline-block">
+<input type="text" id="date-from" value="" readonly="readonly" placeholder="From" class="date-input-M">
+</div>
+<div id="dash">&ndash;</div>
+<div class="datepicker-container inline-block">
+<input type="text" id="date-to" value="" readonly="readonly" placeholder="To" class="date-input-M">
+</div>
+</div>
+<div class="filters_wrapper pside-0 pb-20">
+<label class="label alignRight">Hours:</label>
+<div id="js-hoursSlider" class="slider_range users_activity">
+<div class="gridRuler">
+<div class="gridRuler-item">0</div>
+<div class="gridRuler-item">1</div>
+<div class="gridRuler-item">2</div>
+<div class="gridRuler-item">3</div>
+<div class="gridRuler-item">4</div>
+<div class="gridRuler-item">5</div>
+<div class="gridRuler-item">6</div>
+<div class="gridRuler-item">7</div>
+<div class="gridRuler-item">8</div>
+<div class="gridRuler-item">9</div>
+<div class="gridRuler-item">10</div>
+<div class="gridRuler-item">11</div>
+<div class="gridRuler-item">12</div>
+<div class="gridRuler-item">13</div>
+<div class="gridRuler-item">14</div>
+<div class="gridRuler-item">15</div>
+<div class="gridRuler-item">16</div>
+<div class="gridRuler-item">17</div>
+<div class="gridRuler-item">18</div>
+<div class="gridRuler-item">19</div>
+<div class="gridRuler-item">20</div>
+<div class="gridRuler-item">21</div>
+<div class="gridRuler-item">22</div>
+<div class="gridRuler-item">23</div>
+<div class="gridRuler-item">24</div>
+</div>
+</div>
+</div>
+</form>
+</div>
+<div class="module-wrapper">
+ 
+<div class="graphics-wrapper">
+<h3>Period Analysis</h3>
+ 
+<div id="js-dayPeriod" style="margin: 0px auto; padding: 10px 10px 10px 12px;"></div>
+</div>
+</div>
+<div class="module-wrapper" id="js-detaailGraph" style="display:none;">
+<div class="graphics-wrapper">
+<h3>Day Analysis</h3>
+<div class="charts_switcher" id="js-chartsSwither">
+<span class="title_chart">Activity by hour</span>
+<span class="switch" data-rel="applications_enabled"></span>
+<span class="title_chart">Activity periods</span>
+</div>
+<div id="js-dayAnalHours" style="margin: 0px auto; padding: 10px 10px 10px 12px;width:770px;display:none;"></div>
+<div id="js-dayAnalMin" style="margin: 0px auto; padding: 10px 10px 10px 12px;width:760px;"></div>
+<div class="empty-holder-graph" style="display:none;" id="js-emptyGraph2">
+<img src="img/empty-holder-graph.png" alt="no data"><br/>
+<span>There is no data to be displayed.<br/>Please, wait while data is being processed.</span>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="../mspy_demo_js/users-activity-graphics.js"></script></div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

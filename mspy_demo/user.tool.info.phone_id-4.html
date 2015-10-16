@@ -1,0 +1,902 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Info - Kev non-jail</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1348745574*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439115991*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443176791*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1348745574*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Kev non-jail" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[4]=user.tool.info; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 23;" data-original-title="This is active device">
+<a href="user.tool.info.phone_id-2.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Alice</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li class="" style="margin-bottom:15px;">
+<a href="user.view.dashboard.phone_id-4.html"> <span class="menu-item">Dashboard</span>
+</a> </li>
+<li class="">
+<a href="user.view.contact.phone_id-4.html"> <span class="menu-item">Contacts</span>
+</a> </li>
+<li class="">
+<a href="user.view.call.phone_id-4.html"> <span class="menu-item">Call Logs</span>
+</a> </li>
+<li class="">
+<a href="user.view.sms.phone_id-4.html"> <span class="menu-item">Text Messages</span> </a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.browser.phone_id-4.html"> <span class="menu-item">Browser History</span>
+</a> </li>
+<li class="">
+<a href="user.view.event.phone_id-4.html"> <span class="menu-item">Events</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-light">
+<ul>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.memo.phone_id-4.html"> <span class="menu-item">Notes</span>
+</a> </li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="active">
+<a href="user.tool.info.phone_id-4.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-Settings-main">
+<script type="text/javascript">
+    $config = {"config_id":"","account_id":"","config_gps":"","config_sms":"","config_email":"","config_call":"","config_call_record":"","config_memos":"","config_task":"","config_event":"","config_contact":"","config_media":"","config_audio":"","config_photo":"","config_video":"","config_apps":"1","config_browser":"1","config_skype":"","config_whatsapp":"","config_viber":"","config_keylogger":"0","config_facebook":"","config_callrecording":"","config_callrecording_all":"0","config_update":"","config_debug":"0","config_debug_edate":"","config_recording_start":"","config_recording_end":"","config_update_sent":"","config_command":"","config_client_offset":"0","config_block":"0","config_block_passwd":"","config_temporary_field":"","config_type_connection":"","config_line":""};
+    $url = "user.ajax.settings.phone_id-4.html";
+    var head_modal2 = "Phone Wipeout" ;
+    var head_modal1 = "Unlink current device" ;
+    var head_modal3 = "Stop Tracking the Target Phone" ;
+    var head_modal4 = "Change the Target Phone" ;
+    var head_modal5 = "Clear Logs" ;
+</script>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.jqplot.css" type="text/css"/>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jquery.jqplot.js"></script>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jqplot.pieRenderer.min.js"></script>
+<script class="include" language="javascript" type="text/javascript" src="../mspy_demo_js/jqplot.donutRenderer.min.js"></script>
+<script type="text/javascript">
+function upgradeSubscriptionHandler(account_type) {
+		if (account_type != "demo")
+		{
+	        var checkboxes = document.upgradeForm.elements['phone[]'];
+	        var isAnyOneChecked = false;
+	
+	        if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+	            for (i = 0; i < checkboxes.length ; i++) {
+	                if (checkboxes[i].checked) {
+	                    isAnyOneChecked = true;
+	                    break;
+	                }
+	            }
+	        } else if (checkboxes.checked) {
+	            isAnyOneChecked = true;
+	        }
+	
+	        if (isAnyOneChecked) {
+	            document.upgradeForm.submit();
+	        } else {
+	            alert('Please, select phone number before extending subscription!');
+	        }
+		}
+		else
+		{
+			alert("Not available in demo");
+		}
+    }
+
+        $(document).ready(function() {
+        //hide command notes
+        setTimeout(function(){
+           $('#System-BlockMessages-command-block, #System-BlockMessages-url-command, #System-BlockMessages-command-number, #System-BlockMessages-command-recordnumber').hide();
+        },5000);
+        
+        
+        
+        $("#date-from").datetimepicker({
+            dateFormat:'yy-mm-dd',
+            timeFormat:'hh:mm',
+            //alwaysSetTime: false,
+            separator:' ',
+            minDate: new Date(2015,10-1,09,10,26+2,0),
+            onSelect:function (dateText, inst) {
+                $("#date-to").datetimepicker("option", "minDate", dateText);
+            },
+            addSliderAccess:true,
+            sliderAccessArgs:{ touchonly:false }
+});
+        $("#date-to").datetimepicker({
+            dateFormat:'yy-mm-dd',
+            timeFormat:'hh:mm',
+            separator:' ',
+            minDate: new Date(2015,10-1,09,10,26+2,0),
+            onSelect:function (dateText, inst) {
+                $("#date-from").datetimepicker("option", "maxDate", dateText);
+            },
+            addSliderAccess:true,
+            sliderAccessArgs:{ touchonly:false }
+});
+
+
+
+    /*document.getElementById("date_l").innerHTML = document.getElementById("filter-to-date").value;
+         document.getElementById("time_l").innerHTML = document.getElementById("filter-to-time").value;*/
+});
+
+/*function selectCommandHandler(el){
+
+    if ('start_recording' == el.value) {
+        document.getElementById('to-time-container').style.display = "inline-block";
+        document.getElementById('from-time-container').style.display = "inline-block";
+    } else {
+        document.getElementById('to-time-container').style.display = "none";
+        document.getElementById('from-time-container').style.display = "none";
+    }
+}*/
+function submitCommandHandler(id) {
+    var $form = $("#" + id);
+
+
+    $form.find('input[name="aCommand[command_scheduler_stime]"]').attr("value", document.getElementById('date-from').value);
+    $form.find('input[name="aCommand[command_scheduler_etime]"]').attr("value", document.getElementById('date-to').value);
+    console.log($form.find('input[name="aCommand[command_scheduler_stime]"]').attr("value"));
+    $form.submit();
+
+
+
+}
+/* functions for export files*/
+function showExportForm()
+{
+    $("#logs_export").dialog("open");
+    $("#logs_export").dialog("option", "title", 'Export Logs');
+}
+$(function() {
+    $('#logs_export').dialog({modal: true, autoOpen: false, width: 400});
+});
+
+function logExportInformation(account_id)
+{
+    var checkbox_value = "";
+    
+    $("input[name='export_logs']").each(function(){
+        if ($(this).attr("checked")){
+                checkbox_value = $(this).val();
+        }
+    });
+
+    if (checkbox_value == "")
+    {
+        alert("You must select the type of file to export");
+        return false;
+    }
+    else
+    {
+        var url = "/user.download.format-" + checkbox_value + ".phone_id-" + account_id + ".html"; 
+        document.location.href = url + "?export=all";
+        
+        $("input[name='export_logs']").each(function(){
+            $(this).attr("checked", false);
+        });
+        $('#logs_export').css('display', 'none');
+        $('#logs_export').dialog('close');
+        return true;
+    }
+}
+
+$(document).ready(function() {
+    
+    $( "#from-date-clear-logs" ).datepicker({
+        dateFormat: 'yy-mm-dd ',
+        maxDate: "+0d",
+        //minDate: new Date(1348704000*1000),    
+        onSelect: function(dateText, inst) {
+            $("#to-date-clear-logs").datepicker("option", "minDate", dateText);
+            //setCustom();
+        },
+        beforeShow: function(input, inst) { clearTimeout(submitTimeout); }
+    });
+    
+    $( "#to-date-clear-logs" ).datepicker({
+        dateFormat: 'yy-mm-dd',
+        maxDate: "+0d",
+        //minDate: $("#from-date-clear-logs").val(),
+        onSelect: function(dateText, inst) {
+            //$("#to-date-clear-logs").datepicker("option", "maxDate", dateText);
+        //    setCustom();
+        },
+        beforeShow: function(input, inst) { clearTimeout(submitTimeout); }
+    });
+});
+</script>
+ 
+<div class="content-inner v2 phonemanag_page">
+<h1>Phone Management</h1>
+<table class="table_wrapper mobile" cellpadding="50">
+<tr>
+<td>
+<div class="phoneSettingsLeftCol">
+<h1>Phone Information</h1>
+<table class="content-table">
+<tr>
+<th><h3>Last updated time:</h3></th>
+<td>
+09/27/2016 01:24 PM
+</td>
+</tr>
+<tr>
+<th><h3>Phone name:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap"><input type="text" name="aPhone[account_alias]" id="phone-label" style="width:60%; border: 1px solid #c0c0c0;" value="Kev non-jail">
+<a href="#" title="e.g.: 'My son's phone'" class="icon-info-sign tooltiped" data-placement="top" onclick="return false;">&nbsp;</a>
+</td>
+</tr><tr>
+<th><h3>Phone Number:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap"><input type="text" name="aPhone[account_phone]" style="width: 60%; border: 1px solid #c0c0c0;" id="phonenumber-label" value="1-121-555-23-45">
+<a href="#" title='You can enter phone number' class="icon-info-sign tooltiped" data-placement="top" onclick="return false;">&nbsp;</a> &nbsp;<span class="optional_field">*optional</span>
+</td>
+</tr>
+<tr>
+<th><h3>Platform:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap">
+iOS, v8.1.2 </td>
+</tr>
+<tr>
+<th><h3>Your IMEI:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap">
+7188a93b1fb5af127754957bfd1d8731
+</td>
+</tr>
+<tr>
+<th><h3>Subscribed until:</h3></th>
+<td style="padding-top: 6px; padding-bottom: 5px;" class="errorswrap">
+<form action="user.tool.upgradesubscription.html" method="post" name="upgradeForm">
+<input class="ph" type="radio" name="phone[]" value="4" checked='checked' style="position: absolute; left: -9999px;"/>
+12/31/2019 12:00 AM
+</form>
+</td>
+</tr>
+<tr>
+<th>&nbsp;</th>
+<td>
+</td>
+</tr>
+</table>
+<br style="clear:both;">
+</div>
+</td>
+<td class="">
+<div class="phoneSettingsLeftCol" style="width:97%;">
+<h1 class="title">Re-sync iCloud data</h1>
+<table id="iCloud_table" class="content-table">
+<tbody><tr>
+<th><h3>Apple ID:</h3></th>
+<td>
+<span id="plain_appleId"><a class="__cf_email__" href="/cdn-cgi/l/email-protection" data-cfemail="fc97998a9592d29e9d9588919d92bc859d949393d29f9391">[email&#160;protected]</a><script data-cfhash='f9e31' type="text/javascript">
+/* <![CDATA[ */!function(){try{var t="currentScript"in document?document.currentScript:function(){for(var t=document.getElementsByTagName("script"),e=t.length;e--;)if(t[e].getAttribute("data-cfhash"))return t[e]}();if(t&&t.previousSibling){var e,r,n,i,c=t.previousSibling,a=c.getAttribute("data-cfemail");if(a){for(e="",r=parseInt(a.substr(0,2),16),n=2;a.length-n;n+=2)i=parseInt(a.substr(n,2),16)^r,e+=String.fromCharCode(i);e=document.createTextNode(e),c.parentNode.replaceChild(e,c)}t.parentNode.removeChild(t);}}catch(u){}}()/* ]]> */</script><script cf-hash="f9e31" type="text/javascript">
+                                                </script></span>
+</td>
+<td style="text-align:left">
+<a href="javascript:void(0);" onclick="phoneManagementShowChangeUserForm();" id="iCloud_changeUser" class="grey-btn" style="padding: 6px; margin-left: 0px; width: 80%;">Change User</a>
+</td>
+</tr>
+<tr>
+<th>
+<h3 id="plain_nextUpdateLabel">Next update in:</h3>
+</th>
+<td>
+<span id="plain_nextUpdate">03/14/2015 10:10 AM</span>
+</td>
+<td style="text-align:left;width: 130px;">
+</td>
+</tr>
+</tbody></table>
+<div class="error_block medium_error" style="display:none;" id="iCloud_errorBlock">The Apple ID couldn't be found or your password was incorrect.</div>
+<div class="info_block medium_info" style="display:none;" id="iCloud_infoBlock">The Apple ID couldn't be found or your password was incorrect.</div>
+</div>
+</td>
+</tr>
+</table>
+<br/>
+<div class="phone_settings_controls">
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Unlink current device" href="#" onclick="reinstallApplication(4, 'demo'); ">
+Unlink current device
+</a>
+<div style="display: none;" class="dialog-content" id="logs_export_for_remove">
+<div>
+After this action mSpy will no longer be able to send logs from the current target device. If you wish to monitor another phone, you will need to install mSpy app on it first.<br/><br/>
+</div>
+<div class="logs_export_text" style="text-align: center;margin-bottom: 10px;width: 436px;">
+<label><input type="radio" name="logs_export_for_remove" value="pdf">Export Logs PDF</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="logs_export_for_remove" value="xls">Export Logs XLS</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="logs_export_for_remove" value="csv">Export Logs CSV</label>
+</div>
+<div>
+<br/>
+<label><input id="ckecbox_remove" type="checkbox" value="1" onclick="showButtonRemove();">&nbsp; I understand that all logs will be cleared from my Control Panel and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="export_and_remove_logs" style="margin-left: 0;" type="button" value="Export and delete current logs" onclick="logExportInformationForRemove(4); return false;" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="remove_logs" type="button" value="Delete current logs" onclick="canselLogExportInformation(4); return false;" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_for_remove" type="button" value="Cancel" onclick="$('#logs_export_for_remove').css('display', 'none');$('#logs_export_for_remove').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="red-btn tooltiped" title="Delete the target phone logs " href="#" onclick="showClearLogsModalWindow('demo');">
+Clear Logs
+</a>
+<div style="display: none;" class="dialog-content" id="clear_logs_modal_window">
+<form action="user.tool.phone_id-4.action-clear_logs.html" method="POST" id="form_clear_logs">
+<div>
+<label><input type="radio" name="type_clear_logs" value="all" onclick="disabledClearlogsField();">All logs</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="type_clear_logs" value="defined" onclick="undisabledClearlogsField();">Selected logs</label>&nbsp;&nbsp;&nbsp;
+</div>
+<br/>
+From:
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" name="from_date" id="from-date-clear-logs" class=""/>
+</div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+To:
+<div class="datepicker-container inline-block">
+<input type="text" readonly="readonly" value="" name="to_date" id="to-date-clear-logs" class=""/>
+</div>
+<br/><br/>
+<div class="div_clear_log1">
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="sms">&nbsp;SMS</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="location">&nbsp;Locations</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="event">&nbsp;Events</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="apps">&nbsp;Installed App(s)</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="video">&nbsp;Videos</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="memo">&nbsp;Memos</label><br/>
+</div>
+<div class="div_clear_log2">
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="call">&nbsp;Calls</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="contact">&nbsp;Contacts</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="history">&nbsp;Browsing History</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="photo">&nbsp;Photos</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="recording">&nbsp;Recordings</label><br/>
+<label><input class="clear_logs_element" type="checkbox" name="clear_logs_element[]" value="email">&nbsp;Emails</label><br/>
+</div>
+<div class="clear_from">
+<br/>
+<label><input id="ckecbox_clear_logs" type="checkbox" value="1" onclick="showButtonClearLogs();">&nbsp;I understand that all or selected logs will be deleted from my Control Panel and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="clear_logs_button" style="margin-left: 0;" type="button" value="Clear Logs" onclick="sendClearLogs();" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_clear_logs" type="button" value="Cancel" onclick="$('#clear_logs_modal_window').css('display', 'none');$('#clear_logs_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</form>
+</div>
+ 
+<a data-placement="top" class="grey-btn tooltiped" title="Keep current logs" href="#" onclick="showChangePhoneModalWindow('demo');">
+Keep current logs
+</a>
+<div style="display: none;" class="dialog-content" id="change_phone_modal_window">
+<div>
+This action will remove mSpy app from the current target phone. Choose one of the Export options below if you would like to keep the log file. If you wish to monitor another phone, you will need to install mSpy app on it first.<br/><br/>
+</div>
+<div style="clear:left;">
+<br/>
+<label><input id="ckecbox_change_phone" type="checkbox" value="1" onclick="showButtonChangePhone();">&nbsp;I understand that I won’t be able to track the current target phone and wish to proceed.</label>
+</div>
+<div style="text-align: center; margin-top: 20px;">
+<input style="display: inline-block;" id="button_change_phone" style="margin-left: 0;" type="button" value="Keep current logs" onclick="sendChangePhone('user.tool.phone_id-4.action-change_phone.html');" class="btn btn-danger" disabled>
+<input style="display:inline-block;" id="cansel_button_change_phone" type="button" value="Cancel" onclick="$('#change_phone_modal_window').css('display', 'none');$('#change_phone_modal_window').dialog('close');" class="btn btn-success">
+</div>
+</div>
+ 
+<a data-placement="top" class="grey-btn tooltiped" title="Export Logs" href="javascript:void(0);" onclick="showExportForm(); return false;">
+Export Logs
+</a>
+<div style="display: none;" class="dialog-content" id="logs_export">
+<div>
+Choose one of the Export options below if you would like to keep the log file from the target phone.<br/><br/>
+</div>
+<div class="logs_export_text">
+<label><input type="radio" name="export_logs" value="pdf">Export Logs PDF</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="export_logs" value="xls">Export Logs XLS</label>&nbsp;&nbsp;&nbsp;
+<label><input type="radio" name="export_logs" value="csv">Export Logs CSV</label>
+</div>
+<div style="text-align: center; margin-top: 50px;">
+<input type="hidden" id="change_phone_button" value="0">
+<input style="display: inline-block;" style="margin-left: 0;" type="button" value="Export Logs" onclick="logExportInformation(4); return false;" class="btn btn-danger">
+<input style="display:inline-block;" id="cansel_button" type="button" value="Cancel" onclick="$('#logs_export').css('display', 'none');$('#logs_export').dialog('close');" class="btn btn-success">
+</div>
+</div>
+<br style="clear:both;">
+</div>
+</div>
+<div class="bottom-blocks-setting">
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#AllowGps').bind('change', function(){
+        gpsSwitcherChangeHandler($(this));
+    });
+});
+
+function gpsSwitcherChangeHandler(el) {
+    if (el.val()=='1') {
+        $('input#gps').attr('readonly', false).val('1').focus();
+        $('input#gps').attr('disabled', false);
+    } else {
+        $('input#gps').attr('readonly', 'readonly').val('');
+        $('input#gps').attr('disabled', 'disabled');
+    }
+}
+/*]]>*/
+</script>
+<script type="text/javascript">
+    function strpos(haystack, needle, offset) {
+        var i = (haystack + '').indexOf(needle, (offset || 0));
+        return i === -1 ? false : i;
+    }
+
+
+    function canselCommand(element){
+        var id = element.attr('rel');
+        $.ajax({
+            type: "POST",
+                    url: $url,
+                    cache: false,
+                    data: "&com_id="+id+"&ajax=1&action=canc_command",
+                    dataType: "json",
+                    timeout: 5000,
+                    success: function (data) {
+                        if(data){
+                            if(element.parent().prev().find('span').hasClass('icon-ok-sign')){
+                                element.parent().parent().remove();
+                            } else {
+                                element.parent().parent().remove();
+                            }
+                        }
+                        if(data.result == 0){
+                            alert("Something gone wrong!");
+                        }
+                    }
+        }) ;
+        $('.tooltip-inner').hide();
+        $('.tooltip-arrow').hide();
+    
+    }
+    
+    function BeforeSend(){
+        $(".wifi-only").each(function(){
+            var $this = $(this);
+            if ($this.attr("value") == 2) {
+                var $name = $this.attr("name");
+                var $left_pos = strpos($name, "[");
+                var $right_pos = strpos($name, "]");
+                var $key = $name.substr($left_pos + 1, ($right_pos - $left_pos - 1));
+                document.getElementById("aConfig")['aConf[' + $key + ']'].value = 2;
+            }
+
+        })
+        return true;
+    }
+
+    $(document).ready(function () {
+        $('input[type="text"], select').bind('change', function () {
+            if (!$(this).hasClass('noajax')) {
+                data = $(this).attr('name') + '=' + $(this).val();
+                updateRow(data, $(this));
+            }
+        });
+        
+        if ($('#callRecordingInput').val() == 'XT907' && $('#callRecordings').val() != 0)
+        {
+        	var data = 'aConf[config_callrecording]=0';
+        	updateRow(data, $('#callRecordings'));
+        	
+        	setTimeout(function(){
+        		$('#callRecordings').attr('disabled', 'disabled');
+        	}, 1500);
+        }
+    });
+
+    function updateRow(data, object) {
+        
+        if (object) {
+            object.attr('disabled', 'disabled').css('color', 'gray');
+            var margins = (object.hasClass('intervalz')) ? 'margin-left: 13px; margin-top: 5px;' : 'margin-top: 3px; margin-left: 3px;';
+            if ($('#callRecordingInput').val() != 'XT907')
+        	{
+            	object.after('<img src="skin/site/main_new/img/ajax.gif" alt=""'
+            	+' style="position: absolute; '+margins+'" class="ajaxLoaderInSettings" />');
+            }
+        }
+        $.ajax({
+            type:"POST",
+            url:$url,
+            cache:false,
+            data:data + "&ajax=1",
+            dataType:"json",
+            timeout:5000,
+            success:function (data) {
+                if (object) {
+                    object.removeAttr('disabled').css('color', 'black');
+                    $('.ajaxLoaderInSettings').remove();
+                    
+                    if ($('#callRecordingInput').val() != 'XT907')
+        			{
+        				object.after('<img src="skin/site/main_new/img/confirm.gif" alt=""'
+                    	+' style="position: absolute; '+margins+'" class="ajaxLoaderConfirm" />');
+                    }
+                    setTimeout(function(){
+                        $('.ajaxLoaderConfirm').fadeOut(function(){$(this).remove();})
+                    }, 1000)
+                }
+                /*if (data.result != 1) {
+                    alert("Something gone wrong!");
+                }*/
+            }
+        });
+    }
+</script>
+<script>
+                                $(document).ready(function(){
+                                    var data1 = [
+                                    ['Occupied Space, '+(parseInt() - parseInt())+' Mb', parseInt()-parseInt()],
+                                    ['Free Space,'++'Mb', ]
+                                    ];
+                                    var data2 = [
+                                    ['Occupied Space, '+(parseInt() - parseInt())+' Mb', parseInt()-parseInt()],
+                                    ['Free Space,'++'Mb', ]
+                                    ];
+
+                                if (parseInt(1)!=1){
+                                    var plot1 = jQuery.jqplot('chart1', [data1],
+                                    {
+                                        seriesDefaults:{
+                                            renderer:jQuery.jqplot.PieRenderer,
+                                            rendererOptions:{
+                                                showDataLabels:true
+                                            }
+                                        },
+                                        seriesColors:['#dadcde', '#3498DB'],
+                                        legend:{ show:true, location:'s', showSwatch:true },
+                                        series: [{shadow: false}]
+                                    }
+                            );
+                        } else {
+                            $('#chart1').prev().html('');
+                            $('#chart2').hide().prev().hide();
+                        }
+            
+                                if (parseInt(1)!=1){
+                            var plot2 = jQuery.jqplot('chart2', [data2],
+                                    {
+                                        seriesDefaults:{
+                                            renderer:jQuery.jqplot.PieRenderer,
+                                            rendererOptions:{
+                                                showDataLabels:true
+                                            }
+                                        },
+                                        seriesColors:['#dadcde', '#33c1a5'],
+                                        legend:{ show:true, location:'s', showSwatch:true },
+                                        series: [{shadow: false}]
+                                    }
+                            );
+                        } else {
+                            $('#chart2').hide().prev().hide();
+                        }
+            
+                        
+                        });
+                        </script>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>

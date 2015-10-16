@@ -1,0 +1,663 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<title>mSpy - Application Activity - Alice-Pc</title>
+ 
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery-ui-1.8.7.custom.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/jquery.fancybox-1.3.4.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/main.css" type="text/css"/>
+<link rel="stylesheet" href="../mspy_demo_css/leaflet.css"/>
+<link href="../mspy_demo_css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css"/>
+<!--[if IE 7]>
+<link rel="stylesheet" href="skin/site/main_new/css/ie7.css" type="text/css" />
+<![endif]-->
+<link rel="stylesheet" href="../mspy_demo_css/bootstrap.css" type="text/css"/>
+ 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="../mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fancyzoom.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/fn.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="../mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="../mspy_demo_js/lang.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="../mspy_demo_js/jquery.mCustomScrollbar.js"></script>
+<script type="text/javascript">
+var selectedInteraval = '0';
+var submitTimeout;
+
+var predefinedIntervals = [
+    new Date(1409740370*1000),
+    new Date("Jan 1,2015"),
+//new Date(2015,10-2), /*begining of previous month*/
+    new Date(1439104714*1000), /*-2 month*/
+    new Date(2015,10-1),
+//new Date(1443398400*1000), /*begining of previous week*/
+    new Date(1443165514*1000), /*-2 week*/
+new Date(1444003200*1000),
+new Date(1444348800*1000)];
+
+
+function keyPressHandler(event) {
+if (13 == event.keyCode) {
+    $("#filter-form").submit();
+}
+}
+function noEmptyDateFields(){
+if ("" != $( "#filter-from-date" ).val() && "" != $( "#filter-to-date" ).val() /*&& "" != $( "#filter-from-time" ).val() && "" != $( "#filter-to-time" ).val()*/) {
+    return true;
+} else {
+    return false;
+}
+}
+function upgradeSubscriptionHandlerFrame() {
+            var checkboxes = document.upgradeForma.elements['phone[]'];
+            var isAnyOneChecked = false;
+
+            if ('undefined' == typeof checkboxes.checked && 'undefined' != typeof checkboxes.length) {
+                for (i = 0; i < checkboxes.length ; i++) {
+                    if (checkboxes[i].checked) {
+                        isAnyOneChecked = true;
+                        break;
+                    }
+                }
+            } else if (checkboxes.checked) {
+                isAnyOneChecked = true;
+            }
+
+            if (isAnyOneChecked) {
+                document.upgradeForma.submit();
+            } else {
+                alert('Please, select phone number before extending subscription!');
+            }
+        }
+function setCustom() {
+selectedInteraval = 'custom';
+$('#period .ui-selectmenu-status').text('Custom');
+document.cookie = "filter_mspy_interval=custom;";
+}
+
+function onSubmitTimeout() {
+$("#filter-form").submit();
+}
+
+$(document).ready(function() {
+$(document).ready(function(){
+                $('.tooltiped').tooltip();
+            });
+
+
+$( "#filter-from-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */
+dateFormat: 'yy-mm-dd ',
+//timeFormat: 'hh:mm',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    $("#filter-to-date").datepicker("option", "minDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+        $("#filter-form").submit();
+    }
+},
+   
+});
+
+$( "#filter-to-date" ).datepicker({
+/* dateFormat: 'M dd, yy', */ 
+dateFormat: 'yy-mm-dd',
+maxDate: "+0d",
+//minDate: new Date(1409740370*1000),
+onSelect: function(dateText, inst) {
+    //$("#filter-from-date").datepicker("option", "maxDate", dateText);
+    setCustom();
+    if (noEmptyDateFields()) {
+       $("#filter-form").submit();
+    }
+},
+   
+});
+
+
+$('select#select-period').selectmenu({
+    style:'dropdown',
+    select: function(el,val){
+        if (7 == val.value) {
+            return false;
+        }
+        /*$("#filter-from-date").datepicker("setDate",predefinedIntervals[val.value]);
+       $("#filter-from-time").val('00:00');
+       $("#filter-to-date").datepicker("setDate",new Date());
+       $("#filter-to-time" ).val('23:55');*/
+        document.cookie = "filter_mspy_interval=" + val.value + ";";
+        selectedInteraval = val.value;
+        if (0 == val.value) {
+            $("input[name='do[mspy_filter_show]']").attr('name', 'do[mspy_filter_reset]');
+        }
+
+        $("#filter-form").submit();
+    }
+});
+
+/*$('input.date').datepicker({
+        dateFormat: 'dd M yy',
+        showOn: "button",
+        buttonImage: "/skin/site/main_new/img/calendar.gif",
+        buttonImageOnly: true
+
+});*/
+});
+function submitFilterHandler() {
+    if('Quick search' == document.getElementById('quick-search-input').value) {
+document.getElementById('quick-search-input').value='';
+}
+if(selectedInteraval == 'custom')
+{
+    $('#mspy_filter_from').val($("#filter-from-date").val() + ' 00:00');
+    $('#mspy_filter_to').val($("#filter-to-date").val() + ' 23:59');
+} else {
+    var now = new Date();
+    $('#mspy_filter_from').val($.datepicker.formatDate('yy-mm-dd 00:00', predefinedIntervals[selectedInteraval]));
+    $('#mspy_filter_to').val($.datepicker.formatDate('yy-mm-dd 23:59', now));
+}
+return true;
+}
+</script>
+ 
+<script type='text/javascript'>
+if( typeof document.getElementsByClassName != 'function' ) {
+    HTMLDocument.prototype.getElementsByClassName = Element.prototype.getElementsByClassName = function (className) {
+        if( !className )
+            return [];
+        var elements = this.getElementsByTagName('*');
+        var list = [];
+        var expr = new RegExp( '(^|\\b)' + className + '(\\b|$)' );
+        for (var i = 0, length = elements.length; i<length; i++)
+            if (expr.test(elements[i].className))
+                list.push(elements[i]);
+        return list;
+    };
+}
+</script>
+ 
+<script type="text/javascript">//<![CDATA[
+//var Translator = new Translate([]);
+//]]>
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23666877-6', {
+  'cookieDomain': 'mspy.com'
+});
+  ga('send', 'pageview');
+  ga('require', 'linker');
+  ga('linker:autoLink', ['mspy.fr','mspy.com.br','mspy.it','mspy.mx','mspy.co.uk','mspy.com.es','mspy.se']);
+_gaq = new Object();
+_gaq.push = function(aParams) {
+if (aParams[0] == '_trackEvent')
+{
+    ga('send', 'event', aParams[1], aParams[2], aParams[3], aParams[4]);
+}
+};
+</script>
+ 
+<script src="../mspy_demo_js/ga_events.js"></script>
+ 
+<script type="text/javascript">
+$(document).ready(function(){
+setCookieNotif('referLink','http://www.mspy.com/buynow.html');
+});
+</script>
+ 
+<body>
+<div id="wrapper">
+<div class="wrap_header" id="wrapHeader">
+<div id="header">
+<div class="wrapper">
+<a href="http://localhost/MSPY_WEB/" id="logo" title="Home"></a>
+<div id="login-section">
+<span>Birney Douglas</span>
+<div id="user-menu">
+<a href="user.usersettings.html">Your Profile</a>
+<a href="logout.html" id="logout">Sign Out</a>
+</div>
+</div>
+<a class="btn_buy" href="http://www.mspy.com/buynow.html" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<div class="clear"></div>
+</div>
+</div>
+<div id="header-bottom">
+<div class="wrapper">
+<div id="devices">
+<input id="search-devices-input" placeholder="Alice-Pc" value="" onkeyup="searchDevice(this.value);" onblur="/*defaultSearch();*/">
+<span id="devices-ico"></span>
+<div id="device-list">
+<script type="text/javascript">
+    document.cookie = "phone_tab_state[3]=user.view.launched_apps_desktop; path=/; domain=.demo.mspy.com";</script>
+<div class="title">Devices</div>
+<ul id="ul-devices">
+<li class="active tooltiped" style="z-index: 20;" data-original-title="This is active device">
+<a href="user.view.launched_apps_desktop.phone_id-3.html">
+<span class="ico desktop status online">&nbsp;</span>
+<span class="account-name">Alice-Pc</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>desktop</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+<li class="" style="z-index: 21;" data-original-title="This is active device">
+<a href="user.view.dashboard.phone_id-4.html">
+<span class="ico status offline">&nbsp;</span>
+<span class="account-name">Kev non-jail</span>
+</a>
+<a href="#" style="float: right; margin-right: 5px;">
+<div id="tarif-device" class="tarif-device">
+<span>premium</span>
+<div class="triangle-right-border"></div>
+<div class="triangle-right"></div>
+</div>
+</a>
+</li>
+
+<li id="no-search-device" style="display:none;">No results found</li>
+</ul> </div>
+</div>
+</div>
+</div>
+</div>
+<div id="content">
+<div id="content-left">
+<div id="left-menu">
+<div class="group-menu-grey">
+<ul>
+<li style="margin-bottom:15px;" class="">
+<a href="user.view.dashboarddesktop.phone_id-3.html">
+<span class="menu-item">Dashboard</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="group-menu-grey">
+<ul>
+<li class="">
+<a href="user.view.keylogger_desktop.phone_id-3.html" id="keylogger_desktop">
+<span class="menu-item">Keylogger</span>
+</a>
+</li>
+<li class="active">
+<a href="user.view.launched_apps_desktop.phone_id-3.html" id="launched_apps_desktop">
+<span class="menu-item">Application Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.usersactivity.phone_id-3.html" id="usersactivity">
+<span class="menu-item">User Activity</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.screenshotsdesktop.phone_id-3.html" id="screenshotsdesktop">
+<span class="menu-item">Screenshots</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.desktop_apps.phone_id-3.html" id="desktop_apps">
+<span class="menu-item tooltiped">Installed Apps</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.view.webmaildesktop.phone_id-3.html" id="webmail">
+<span class="menu-item tooltiped">Webmail</span>
+<span class="notification-menu-wrapper">
+<i class="notification-menu">new!</i>
+</span>
+</a>
+</li>
+<li class="">
+<a href="user.tool.infodesktop.phone_id-3.html">
+<span class="menu-item">Device Management</span>
+</a>
+</li>
+</ul>
+</div> </div>
+</div>
+<div id="content-right">
+<div id="content-block-middle">
+<div class="component" id="Phone-UserViewLaunchedAppsDesktop-main">
+<script type="text/javascript">
+function applicationType(application_name, user_name)
+{
+	alert('Not available in demo!');
+}
+
+</script>
+<div class="content-inner">
+<div class="component" id="System-BlockMessages-phone.not.connected"></div>
+<h1>Application Activity</h1>
+<p>You will see which apps were active (launched) on the computer, how long they were active, and how long the user was active within each app ( typed the text, clicked the mouse).</p>
+<div class="filter_keylogger margintop20">
+<div class="sApp">
+<select onchange="applicationType(this.value, '');">
+<option value="0">All Applications</option>
+<option value="0">Skype</option>
+<option value="1">Evernote</option>
+<option value="2">MS Word 2011</option>
+<option value="3">MS Excel</option>
+<option value="4">Windows Media Player</option>
+<option value="5">Firefox</option>
+<option value="6">Chrome</option>
+</select>
+</div>
+<div class="sApp">
+<span class="span__margin-left">User:</span>
+<select onchange="applicationType('', this.value);">
+<option value="0">All Users</option>
+<option value="1">Alice</option>
+</select>
+</div>
+<div class="data_filter_keylogger" style="float:right;">
+Total spent time: <span class="span__left-blue">10:37:19</span>
+</div>
+</div>
+<table class="content-table launched-app" border="0" cellpadding="0" cellspacing="0">
+<colgroup>
+<col width="30%"/>
+<col width="22%"/>
+<col width="30%"/>
+<col width="18%"/>
+</colgroup>
+<tr class="title">
+<th>Application</th>
+<th>User</th>
+<th>Active</th>
+<th>Start time</th>
+</tr>
+ 
+<tr class="mt-10">
+<td>Firefox</td>
+<td>Alice</td>
+<td>00:21:04</td>
+<td>10/09/15 7:16 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:14%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Evernote</td>
+<td>Alice</td>
+<td>00:28:14</td>
+<td>10/09/15 7:10 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:18%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Firefox</td>
+<td>Alice</td>
+<td>01:21:04</td>
+<td>10/09/15 6:45 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:50%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>MS Word 2011</td>
+<td>Alice</td>
+<td>00:45:54</td>
+<td>10/09/15 6:11 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:30%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>MS Excel</td>
+<td>Alice</td>
+<td>00:25:56</td>
+<td>10/09/15 5:30 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:15%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Chrome</td>
+<td>Alice</td>
+<td>00:15:56</td>
+<td>10/09/15 5:23 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:10%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Skype</td>
+<td>Alice</td>
+<td>00:01:56</td>
+<td>10/09/15 5:18 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:1%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Skype</td>
+<td>Alice</td>
+<td>00:00:26</td>
+<td>10/09/15 5:16 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:1%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Viber</td>
+<td>Alice</td>
+<td>00:01:13</td>
+<td>10/09/15 5:13 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:2%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Chrome</td>
+<td>Alice</td>
+<td>00:11:28</td>
+<td>10/09/15 5:05 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:8%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Skype</td>
+<td>Alice</td>
+<td>00:00:49</td>
+<td>10/09/15 4:43 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:2%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Firefox</td>
+<td>Alice</td>
+<td>00:5:31</td>
+<td>10/09/15 4:43 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:5%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+ 
+<tr class="mt-10">
+<td>Chrome</td>
+<td>Alice</td>
+<td>00:52:01</td>
+<td>10/09/15 4:26 AM</td>
+</tr>
+<tr> </tr>
+<tr>
+<td colspan="4" class="activity_bar">
+<div class="bg_bar">
+<div class="graqdient_wrapp" style="width:35%;">
+<div class="act_bar"></div>
+</div>
+</div>
+</td>
+</tr>
+<tr><td height="0" style="padding: 2px;" colspan="4">&nbsp;</td></tr>
+ 
+</table>
+</div>
+</div> <div class="clear"></div>
+</div>
+</div>
+<div class="clear">&nbsp;</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-inner">
+<div id="copyright">&copy; 2015 MSPY. All Rights Reserved. All the trademarks are the property of their respective owners.</div>
+</div>
+</div>
+<div class='ajax-window-info'></div>
+</body>
+</html>
