@@ -526,8 +526,8 @@ function moreText() {
 	var block = $('.js-ShowMore');
 
     var moreTextEllipses = '...';
-    var moreTextMore = 'more';
-    var moreTextLess = 'less';
+    var moreTextMore = 'მეტი';
+    var moreTextLess = 'ნაკლები';
 
 	if (block.length) {
 		var showChar = block.data('char')||100;
