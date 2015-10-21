@@ -1,7 +1,7 @@
-<!DOCTYPE html> 
-<!--[if IE 7]><html class="ie7"><![endif]-->
-<!--[if IE 8]><html class="ie8"><![endif]-->
-<!--[if !IE]><!-->
+<?php
+$operatorId = $_REQUEST['opid'];
+setcookie('OPID', $operatorId);
+?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
 <head>
@@ -98,7 +98,7 @@
 						<p class="text_buy">
 							კომპიუტერისთვის <strong>$19.99</strong> -დან
 						</p>
-						<a id="HomeBtnBuynow" class="btn arow" href="http://mspy.go2cloud.org/SH2rP">შეიძინე ახლავე</a>
+						<a id="HomeBtnBuynow" class="btn arow" href="http://mspy.go2cloud.org/SH2rP<?php if(!empty($_COOKIE['OPID'])){echo '?source='.$_COOKIE['OPID'];} else{echo '?source='.$operatorId;}?>">შეიძინე ახლავე</a>
 					</div>
 				</div>
 			</section>
