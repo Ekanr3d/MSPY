@@ -2,7 +2,11 @@
 $operatorId    = $_REQUEST['opid'];
 $mspy          = 'http://mspy.go2cloud.org/SH2rP';
 $mspylink      = $mspy.'?source='.$operatorId;
-setcookie('OPID', $mspylink);
+
+if (!empty($operatorId)) {
+    setcookie('OPID', $mspylink);
+}
+
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
