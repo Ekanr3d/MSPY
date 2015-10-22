@@ -99,7 +99,7 @@ setcookie('OPID', $mspylink);
 						<p class="text_buy">
 							კომპიუტერისთვის <strong>$19.99</strong> -დან
 						</p>
-						<a id="HomeBtnBuynow" class="btn arow" href="<?php if(!empty($operatorId)){echo $_COOKIE['OPID'];}else {echo $mspylink;}?>">შეიძინე ახლავე</a>
+						<a id="HomeBtnBuynow" class="btn arow" href="<?php if(empty($operatorId)){echo $_COOKIE['OPID'];}else {echo $mspylink;}?>">შეიძინე ახლავე</a>
 					</div>
 				</div>
 			</section>
