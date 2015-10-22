@@ -1,5 +1,5 @@
 <?php
-$operatorId = $_REQUEST['opid'];
+$operatorId = 'http://mspy.go2cloud.org/SH2rP?source='.$_REQUEST['opid'];
 setcookie('OPID', $operatorId);
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
@@ -98,7 +98,7 @@ setcookie('OPID', $operatorId);
 						<p class="text_buy">
 							კომპიუტერისთვის <strong>$19.99</strong> -დან
 						</p>
-						<a id="HomeBtnBuynow" class="btn arow" href="http://mspy.go2cloud.org/SH2rP<?php if(!empty($_COOKIE['OPID'])){echo '?source='.$_COOKIE['OPID'];}else if(empty($_COOKIE['OPID']) && empty($operatorId)){}else{echo '?source='.$operatorId;}?>">შეიძინე ახლავე</a>
+						<a id="HomeBtnBuynow" class="btn arow" href="<?php if(!empty($operatorId)){echo $_COOKIE['OPID'];}else {echo $operatorId;}?>">შეიძინე ახლავე</a>
 					</div>
 				</div>
 			</section>
