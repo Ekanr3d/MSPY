@@ -7,7 +7,19 @@
  *
  * http://docs.jquery.com/UI
  */
-
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}
+function urldecode(str) {
+	return decodeURIComponent((str + '')
+	    .replace(/%(?![\da-f]{2})/gi, function() {
+	      // PHP tolerates poorly formed escape sequences
+	      return '%25';
+	    })
+	    .replace(/\+/g, '%20'));
+	}
 (function($) {
 
 $.widget("ui.selectmenu", {

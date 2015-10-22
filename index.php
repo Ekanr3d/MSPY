@@ -89,7 +89,7 @@ echo $operatorId;
 		<article class="content">
 			<section class="home-head">
 				<div class="nojail-toolbar">
-					<a class="nojail-toolbar__c" href="product-nojail.html"> <img
+					<a class="nojail-toolbar__c"> <img
 						width="18" height="22" src="images/appleNojail-images.png"
 						alt="Apple"> mSpy გადაწყვეტები: Now With No-Jailbreak Required!
 					</a>

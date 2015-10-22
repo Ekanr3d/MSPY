@@ -225,7 +225,7 @@ if (aParams[0] == '_trackEvent')
  
 <script type="text/javascript">
 $(document).ready(function(){
-setCookieNotif('referLink','buynow.html');
+var str=getCookie('OPID'); var opid=urldecode(str); $(".btn_buy").attr('href',opid);
 });
 </script>
  
