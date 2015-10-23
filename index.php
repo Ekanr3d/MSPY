@@ -8,8 +8,6 @@ if (!empty($operatorId)) {
     setcookie('OPID', $mspylink);
 }
 
-echo $operatorId;
-
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
