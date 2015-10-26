@@ -1,9 +1,10 @@
 <?php
 
 $operatorId    = $_REQUEST['opid'];
+
 $mspy          = 'http://mspy.go2cloud.org/SH2rP';
 $mspylink      = $mspy.'?source='.$operatorId;
-
+$msp_link1     = $_COOKIE['OPID'];
 if (!empty($operatorId)) {
     setcookie('OPID', $mspylink);
 }
@@ -105,7 +106,7 @@ if (!empty($operatorId)) {
 						<p class="text_buy">
 							კომპიუტერისთვის <strong>$19.99</strong> -დან
 						</p>
-						<a id="HomeBtnBuynow" class="btn arow" href="<?php if(empty($operatorId)){echo $_COOKIE['OPID'];}else{echo $mspylink;}?>">შეიძინე ახლავე</a>
+						<a id="HomeBtnBuynow" class="btn arow" href="<?php if(empty($operatorId)){if (empty($msp_link1)){echo $mspy;}else{echo $msp_link1;}}else{echo $mspylink;}?>">შეიძინე ახლავე</a>
 					</div>
 				</div>
 			</section>
