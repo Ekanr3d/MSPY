@@ -338,7 +338,7 @@ if (!empty($operatorId)) {
 								<div class="wrap table">
 									<div class="col tablecell">
 										<h3 class="title">1. ჩამოტვირთვა & ინსტალაცია</h3>
-										<p class="text">აპლიკაცია mSpy -ის ჩამოტვირტვის შემდეგ იმ ტელეფონზე რომლის კონტროლიც გსურს, installation wizard will
+										<p class="text">აპლიკაცია mSpy -ის ჩამოტვირთვის შემდეგ იმ ტელეფონზე რომლის კონტროლიც გსურს, installation wizard will
 											appear to guide you through the configuration process.</p>
 									</div>
 									<div class="col tablecell">
