@@ -56,7 +56,7 @@
 						<a class="item" href="index.php">მთავარი</a> 
 						<a class="item" href="features.php">მახასიათებლები</a> 
 						<a class="item" href="compatibility.php">თავსებადობა</a>
-						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.html">Live Demo</a> 
+						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.php">Live Demo</a> 
 						<a class="item" href="faq.php">FAQ</a> 
 						<a class="item" href="about.php">კონტაქტი</a>
 							

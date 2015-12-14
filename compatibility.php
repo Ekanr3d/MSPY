@@ -6,7 +6,7 @@
     $agent = $_COOKIE['OPID'];
     $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
     mysql_connect('212.72.155.176','root','Gl-1114');
-    mysql_select_db('mspy');
+    mysql_selectdb('mspy');
     mysql_set_charset ( 'utf8');
     
     mysql_query("INSERT INTO `access_log` 
@@ -57,7 +57,7 @@
 						<a class="item" href="index.php">მთავარი</a> 
 						<a class="item" href="features.php">მახასიათებლები</a> 
 						<a class="item" href="compatibility.php">თავსებადობა</a>
-						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.html">Live Demo</a> 
+						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.php">Live Demo</a> 
 						<a class="item" href="faq.php">FAQ</a> 
 						<a class="item" href="about.php">კონტაქტი</a>
 							
