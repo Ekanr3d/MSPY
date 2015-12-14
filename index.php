@@ -16,14 +16,22 @@
     $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
     
      mysql_connect('localhost','root','Gl-1114');
-     mysql_selectdb('mspy');
+     mysql_selectdb('callapp_main');
      mysql_set_charset ( 'utf8');
-    mysql_query("INSERT INTO `access_log` 
+     mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '$ip', 'მთავარი', '$agent');");
+    						(NOW(), '192.168.11.98', 'მთავარი', '$agent');");
     mysql_close();
 ?>
+
+<script type="text/javascript">
+    
+
+    	
+				
+    
+</script>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
 <head>
