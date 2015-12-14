@@ -5,9 +5,10 @@
     $ip=ip();
     $agent = $_COOKIE['OPID'];
 	$agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
-    mysql_connect('localhost','root','Gl-1114');
-    mysql_selectdb('mspy');
-    mysql_set_charset ( 'utf8');
+    
+	mysql_connect('localhost','root','Gl-1114');
+	mysql_selectdb('mspy');
+	mysql_set_charset ( 'utf8');
     
     mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
