@@ -21,12 +21,15 @@
      mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '192.168.11.98', 'მთავარი', '$agent');");
+    						(NOW(), '$ip', 'მთავარი', '$agent');");
     mysql_close();
 ?>
 
 <script type="text/javascript">
-    
+
+$(document).ready(function () {     
+	alert(123);		
+});  
 
     	
 				
