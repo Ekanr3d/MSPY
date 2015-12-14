@@ -15,7 +15,7 @@
     $agent = $_COOKIE['OPID'];
     $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
     
-    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_connect('localhost','root','Gl-1114');
     mysql_select_db('mspy');
     mysql_set_charset ( 'utf8');
     
