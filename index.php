@@ -24,17 +24,47 @@
     						(NOW(), '$ip', 'მთავარი', '$agent');");
     mysql_close();
 ?>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../mspy_demo_js/jquery-1.7.2.min.js"><\/script>')</script>
+<script type="text/javascript" src="mspy_demo_js/jquery.fancybox-1.3.4.pack.js"></script>
+<script type="text/javascript" src="mspy_demo_js/fancyzoom.js"></script>
 
+<script type="text/javascript" src="mspy_demo_js/popup_ios.js"></script>
+ 
+<script type="text/javascript" src="mspy_demo_js/jquery-ui-1.8.7.custom.min.js"></script>
+ 
+<script type="text/javascript" src="mspy_demo_js/flowplayer-3.2.4.min.js"></script>
+ 
+<script type="text/javascript" src="mspy_demo_js/audio-player.js"></script>
+ 
+<script type="text/javascript" src="mspy_demo_js/ui.selectmenu.js"></script>
+<script type="text/javascript" src="mspy_demo_js/jquery-chrome.js"></script>
+<script type="text/javascript" src="mspy_demo_js/bootstrap-tooltip_.js"></script>
+ 
+<script type="text/javascript" src="mspy_demo_js/timepicker-slider.js"></script>
+<script type="text/javascript" src="mspy_demo_js/lang.js"></script>
+ 
+<script src="mspy_demo_js/jquery.mousewheel.js"></script>
+ 
+<script src="mspy_demo_js/jquery.mCustomScrollbar.js"></script>
 <script type="text/javascript">
-
-$(document).ready(function () {     
-	alert(123);		
-});  
-
-    	
-				
-    
+var aJaxURL           = "mspy_demo/click.php";
+$(document).on("click", "#HomeBtnBuynow", function () {
+	param 			= new Object();
+	param.as		= "jondo";
+	$.ajax({
+        url: aJaxURL,
+        data: param,
+        success: function(data) {
+         
+        }
+    });
+});
+// $(document).ready(function(){
+// 	$.getJSON("click.php");
+// });
 </script>
+
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
 <head>
