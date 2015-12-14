@@ -22,7 +22,7 @@
     mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '$ip', 'მთავარი', '$agent');");
+    						(NOW(), '$ip', 'მთავარი', '$agent');") or die (err);
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
