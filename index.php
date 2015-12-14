@@ -1,8 +1,4 @@
 <?php
-
-mysql_connect('212.72.155.176','root','Gl-1114');
-mysql_select_db('mspy');
-mysql_set_charset ( 'utf8');
     $operatorId    = $_REQUEST['opid'];
     
     $mspy          = 'http://mspy.go2cloud.org/SH2rP';
@@ -19,7 +15,9 @@ mysql_set_charset ( 'utf8');
     $agent = $_COOKIE['OPID'];
     $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
     
-    
+    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_select_db('mspy');
+    mysql_set_charset ( 'utf8');
     
     mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
