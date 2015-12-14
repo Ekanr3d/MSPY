@@ -1,4 +1,19 @@
+<?php
 
+    require_once '../get_ip.php';
+    $ip=ip();
+    $agent = $_COOKIE['OPID'];
+    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    
+    mysql_connect('localhost','root','Gl-1114');
+    mysql_selectdb('mspy');
+    mysql_set_charset ( 'utf8');
+    
+    mysql_query("INSERT INTO `access_log` 
+    						(`date`, `ip`, `page`, `agent`) 
+    				VALUES 
+    						(NOW(), '$ip', 'FAQ', '$agent');");
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
