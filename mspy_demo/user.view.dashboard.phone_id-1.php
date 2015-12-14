@@ -299,7 +299,7 @@ $(document).ready(function(){
 <div class="group-menu-grey">
 <ul>
 <li class="active" style="margin-bottom:15px;">
-<a href="user.view.dashboard.phone_id-1.html"> <span class="menu-item">Dashboard</span>
+<a href="user.view.dashboard.phone_id-1.php"> <span class="menu-item">Dashboard</span>
 </a> </li>
 <li class=""><a href="user.view.contact.phone_id-1.html"> <span class="menu-item">Contacts</span></a> </li>
 <li class="">
