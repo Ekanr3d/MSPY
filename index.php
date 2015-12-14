@@ -1,14 +1,28 @@
 <?php
-
-$operatorId    = $_REQUEST['opid'];
-
-$mspy          = 'http://mspy.go2cloud.org/SH2rP';
-$mspylink      = $mspy.'?source='.$operatorId;
-$msp_link1     = $_COOKIE['OPID'];
-if (!empty($operatorId)) {
-    setcookie('OPID', $mspylink);
-}
-
+    $operatorId    = $_REQUEST['opid'];
+    
+    $mspy          = 'http://mspy.go2cloud.org/SH2rP';
+    $mspylink      = $mspy.'?source='.$operatorId;
+    $msp_link1     = $_COOKIE['OPID'];
+    
+    if (!empty($operatorId)) {
+        setcookie('OPID', $mspylink);
+    }
+    
+    require_once 'get_ip.php';
+    $ip=ip();
+    
+    $agent = $_COOKIE['OPID'];
+    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    
+    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_select_db('mspy');
+    mysql_set_charset ( 'utf8');
+    
+    mysql_query("INSERT INTO `access_log` 
+    						(`date`, `ip`, `page`, `agent`) 
+    				VALUES 
+    						(NOW(), '$ip', 'მთავარი', '$agent');");
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
@@ -46,11 +60,11 @@ if (!empty($operatorId)) {
 				</div>
 				<nav id="top_nav" class="top_nav">
 					<a class="item" href="index.php">მთავარი</a> 
-					<a class="item" href="features.html">მახასიათებლები</a> 
-					<a class="item" href="compatibility.html">თავსებადობა</a>
+					<a class="item" href="features.php">მახასიათებლები</a> 
+					<a class="item" href="compatibility.php">თავსებადობა</a>
 					<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.html">Live Demo</a> 
-					<a class="item" href="faq.html">FAQ</a> 
-					<a class="item" href="about.html">კონტაქტი</a>
+					<a class="item" href="faq.php">FAQ</a> 
+					<a class="item" href="about.php">კონტაქტი</a>
 					
 					<div id="login_form" class="login_form">
 						<i class="arow"></i>
@@ -115,7 +129,7 @@ if (!empty($operatorId)) {
 					<div class="span6">
 						<h2 class="page_title mt60">ტელეფონისთვის</h2>
 						<div class="feature-block animate">
-							<a class="item" href="features.html">
+							<a class="item" href="features.php">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -134,7 +148,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html">
+							</a> <a class="item" href="features.php">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -156,7 +170,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html">
+							</a> <a class="item" href="features.php">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -177,7 +191,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html">
+							</a> <a class="item" href="features.php">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -196,7 +210,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html">
+							</a> <a class="item" href="features.php">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -221,7 +235,7 @@ if (!empty($operatorId)) {
 					<div class="span6">
 						<h2 class="page_title mt60">კომპიუტერისთვის</h2>
 						<div class="feature-block animate">
-							<a class="item" href="features.html#desktop-tab">
+							<a class="item" href="features.php#desktop-tab">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -242,7 +256,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html#desktop-tab">
+							</a> <a class="item" href="features.php#desktop-tab">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -263,7 +277,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html#desktop-tab">
+							</a> <a class="item" href="features.php#desktop-tab">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -284,7 +298,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html#desktop-tab">
+							</a> <a class="item" href="features.php#desktop-tab">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">
@@ -303,7 +317,7 @@ if (!empty($operatorId)) {
 										</div>
 									</div>
 								</div>
-							</a> <a class="item" href="features.html#desktop-tab">
+							</a> <a class="item" href="features.php#desktop-tab">
 								<div class="wrap_info">
 									<div class="info">
 										<div class="cover top">

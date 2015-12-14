@@ -1,3 +1,18 @@
+<?php
+
+    require_once 'get_ip.php';
+    $ip=ip();
+    $agent = $_COOKIE['OPID'];
+    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_select_db('mspy');
+    mysql_set_charset ( 'utf8');
+    
+    mysql_query("INSERT INTO `access_log` 
+    						(`date`, `ip`, `page`, `agent`) 
+    				VALUES 
+    						(NOW(), '$ip', 'მახასიათებლები', '$agent');");
+?>
 <!DOCTYPE html>
 <!--[if IE 7]><html class="ie7"><![endif]-->
 <!--[if IE 8]><html class="ie8"><![endif]-->
@@ -39,11 +54,11 @@
 					</div>
 					<nav id="top_nav" class="top_nav">
 						<a class="item" href="index.php">მთავარი</a> 
-						<a class="item" href="features.html">მახასიათებლები</a> 
-						<a class="item" href="compatibility.html">თავსებადობა</a>
+						<a class="item" href="features.php">მახასიათებლები</a> 
+						<a class="item" href="compatibility.php">თავსებადობა</a>
 						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.html">Live Demo</a> 
-						<a class="item" href="faq.html">FAQ</a> 
-						<a class="item" href="about.html">კონტაქტი</a>
+						<a class="item" href="faq.php">FAQ</a> 
+						<a class="item" href="about.php">კონტაქტი</a>
 							
 						<div id="login_form" class="login_form">
 							<i class="arow"></i>

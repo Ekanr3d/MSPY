@@ -1,3 +1,18 @@
+<?php
+
+    require_once 'get_ip.php';
+    $ip=ip();
+    $agent = $_COOKIE['OPID'];
+    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    mysql_connect('212.72.155.176','root','Gl-1114');
+    mysql_select_db('mspy');
+    mysql_set_charset ( 'utf8');
+    
+    mysql_query("INSERT INTO `access_log` 
+    						(`date`, `ip`, `page`, `agent`) 
+    				VALUES 
+    						(NOW(), '$ip', 'FAQ', '$agent');");
+?>
 <!DOCTYPE html>
 <!--[if IE 7]><html class="ie7"><![endif]-->
 <!--[if IE 8]><html class="ie8"><![endif]-->
@@ -39,11 +54,11 @@
 					</div>
 					<nav id="top_nav" class="top_nav">
 						<a class="item" href="index.php">მთავარი</a> 
-						<a class="item" href="features.html">მახასიათებლები</a> 
-						<a class="item" href="compatibility.html">თავსებადობა</a>
+						<a class="item" href="features.php">მახასიათებლები</a> 
+						<a class="item" href="compatibility.php">თავსებადობა</a>
 						<a class="item" href="mspy_demo/user.view.dashboard.phone_id-1.html">Live Demo</a> 
-						<a class="item" href="faq.html">FAQ</a> 
-						<a class="item" href="about.html">კონტაქტი</a>
+						<a class="item" href="faq.php">FAQ</a> 
+						<a class="item" href="about.php">კონტაქტი</a>
 							
 						<div id="login_form" class="login_form">
 							<i class="arow"></i>
@@ -152,7 +167,7 @@
 										<li>iOS 6 – 8.3</li>
 									</ul>
 									<p>
-										შეამოწმეთ <a href="compatibility.html">აქ</a>, თავსებადია თუ არა თქვენი მობილური .
+										შეამოწმეთ <a href="compatibility.php">აქ</a>, თავსებადია თუ არა თქვენი მობილური .
 									</p>
 									<p>
 										mSpy მუშაობს non-jailbroken (შეზუდვამოუხსნელ) iOS სისტემებზეც, 
@@ -354,7 +369,7 @@
 									<p>
 										მას შემდეგ, რაც mSpy დაყენებული იქნება გასაკონტროლირებელ მოწყობილობაზე და დაკავშირებული იქნება ჩვენს სერვერზე, 
 										ინფორმაცია ავტომატურად გამოჩნდება თქვენს Control Panel-ზე, რომელშიც შეხვალთ ნებისმიერი ინტერნეტ ბრაუზერიდან. 
-										შემოწმეთ, როგორ გამოიყურება კონტროლ პანელი <a class="js-viewDemo" href="faq.html#">View Demo</a>-ზე დაკლიკებით.
+										შემოწმეთ, როგორ გამოიყურება კონტროლ პანელი <a class="js-viewDemo" href="faq.php#">View Demo</a>-ზე დაკლიკებით.
 									</p>
 								</div>
 							</div>
@@ -419,7 +434,7 @@
 										სადაც თქვენ იხილავთ ინსატალაციის გზამკვლევს თავისი ინსტრუქციებით.
 									</p>
 									<p>
-										იხილეთ: <q><a href='faq.html#Q8 '>როგორ დავაინსტალირო  mSpy?</a></q>
+										იხილეთ: <q><a href='faq.php#Q8 '>როგორ დავაინსტალირო  mSpy?</a></q>
 									</p>
 								</div>
 							</div>
@@ -627,7 +642,7 @@
 									<p>
 										User-friendly <a class="js-viewDemo"
 											data-target="user.view.dashboarddesktop.phone_id-3"
-											href="faq.html#">Customer’s area</a>, 24/7 live Customer
+											href="faq.php#">Customer’s area</a>, 24/7 live Customer
 										Support, variety of subscription plans and affordable prices
 										would make your experience the best value for your money.
 									</p>
@@ -643,7 +658,7 @@
 										access using any Internet browser.</p>
 									<p>
 										To start using mSpy you need to check the <a
-											href="compatibility.html#tab-windows">compatibility</a> of
+											href="compatibility.php#tab-windows">compatibility</a> of
 										the computer you’d like to monitor, choose the subscription
 										plan and proceed with the purchase. After that you receive an
 										email with the login and password to your personal Control
@@ -674,7 +689,7 @@
 									</ul>
 									<p>
 										Please check whether your device is compatible by entering its
-										OS version <a href="compatibility.html#tab-windows">here</a>
+										OS version <a href="compatibility.php#tab-windows">here</a>
 									</p>
 								</div>
 							</div>
@@ -800,7 +815,7 @@
 										accessed from any browser. Check how mSpy Control Panel looks
 										by pressing <a class="js-viewDemo"
 											data-target="user.view.dashboarddesktop.phone_id-3"
-											href="faq.html#">View Demo</a>
+											href="faq.php#">View Demo</a>
 									</p>
 								</div>
 							</div>
