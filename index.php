@@ -23,6 +23,7 @@
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
     						(NOW(), '$ip', 'მთავარი', '$agent');");
+    mysql_close();
 ?>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <!--<![endif]-->
