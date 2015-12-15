@@ -13,7 +13,7 @@
     $ip=ip();
     
     $agent = $_COOKIE['OPID'];
-    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    $agent1=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
     
      mysql_connect('localhost','root','Gl-1114');
      mysql_selectdb('callapp_main');
@@ -21,7 +21,7 @@
      mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '$ip', 'მთავარი', '$agent');");
+    						(NOW(), '$ip', 'მთავარი', '$agent1');");
     mysql_close();
 ?>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
