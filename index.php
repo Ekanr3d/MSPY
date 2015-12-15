@@ -7,21 +7,27 @@
     
     if (!empty($operatorId)) {
         setcookie('OPID', $mspylink);
+        $agent = $_REQUEST['opid'];
+    }else {
+        if (empty($msp_link1)) {
+            $agent = '';
+        }else {
+            $agent = str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$msp_link1);
+        }
     }
     
     require_once 'get_ip.php';
+    
     $ip=ip();
     
-    $agent = $_COOKIE['OPID'];
-    $agent1=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
-    
-     mysql_connect('localhost','root','Gl-1114');
-     mysql_selectdb('callapp_main');
-     mysql_set_charset ( 'utf8');
-     mysql_query("INSERT INTO `access_log` 
+    mysql_connect('localhost','root','Gl-1114');
+    mysql_selectdb('callapp_main');
+    mysql_set_charset ( 'utf8');
+     
+    mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '$ip', 'მთავარი', '$operatorId');");
+    						(NOW(), '$ip', 'მთავარი', '$agent');");
     mysql_close();
 ?>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
