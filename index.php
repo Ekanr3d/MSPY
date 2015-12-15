@@ -21,7 +21,7 @@
      mysql_query("INSERT INTO `access_log` 
     						(`date`, `ip`, `page`, `agent`) 
     				VALUES 
-    						(NOW(), '$ip', 'მთავარი', '$agent1');");
+    						(NOW(), '$ip', 'მთავარი', '$operatorId');");
     mysql_close();
 ?>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
