@@ -1,7 +1,7 @@
 <?php
     $operatorId    = $_REQUEST['opid'];
     
-    $mspy          = 'http://mspy.go2cloud.org/SH2rP';
+    $mspy          = 'http://mspy.go2cloud.org/SH2p7';
     $mspylink      = $mspy.'?source='.$operatorId;
     $msp_link1     = $_COOKIE['OPID'];
     
@@ -12,7 +12,7 @@
         if (empty($msp_link1)) {
             $agent = '';
         }else {
-            $agent = str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$msp_link1);
+            $agent = str_replace("http://mspy.go2cloud.org/SH2p7?source=","",$msp_link1);
         }
     }
     

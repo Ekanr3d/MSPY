@@ -3,7 +3,7 @@
     require_once '../get_ip.php';
     $ip=ip();
     $agent = $_COOKIE['OPID'];
-    $agent=str_replace("http://mspy.go2cloud.org/SH2rP?source=","",$agent);
+    $agent=str_replace("http://mspy.go2cloud.org/SH2p7?source=","",$agent);
     
     mysql_connect('localhost','root','Gl-1114');
     mysql_selectdb('callapp_main');
@@ -241,7 +241,7 @@ if (aParams[0] == '_trackEvent')
 <script type="text/javascript">
 $(document).ready(function(){
 
-	var str=getCookie('OPID'); var opid=urldecode(str);  if(opid=='undefined'){$(".btn_buy").attr('href','http://mspy.go2cloud.org/SH2rP');}else{$(".btn_buy").attr('href',opid);};
+	var str=getCookie('OPID'); var opid=urldecode(str);  if(opid=='undefined'){$(".btn_buy").attr('href','http://mspy.go2cloud.org/SH2p7');}else{$(".btn_buy").attr('href',opid);};
 
 });
 
@@ -261,7 +261,7 @@ $(document).ready(function(){
 <a href="logout.html" id="logout">Sign Out</a>
 </div>
 </div>
-<a class="btn_buy" href="http://mspy.go2cloud.org/SH2rP" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
+<a class="btn_buy" href="http://mspy.go2cloud.org/SH2p7" onclick="ga('send', 'event', 'Header', 'click', 'BuyNow');">Buy now!</a>
 <div class="clear"></div>
 </div>
 </div>
