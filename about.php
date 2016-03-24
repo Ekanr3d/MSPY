@@ -15,7 +15,65 @@
     				VALUES 
     						(NOW(), '$ip', 'კონტაქტი', '$agent');");
     
+//     $to      = 'aleqsandrefocxverashvili@gmail.com';
+//     $subject = 'the subject';
+//     $message = 'hello';
+//     $headers = 'From: support@tdgroup.ge' . "\r\n" .
+//                 'Reply-To: support@tdgroup.ge' . "\r\n" .
+//                 'X-Mailer: PHP/' . phpversion();
+    
+//     mail($to, $subject, $message, $headers);
+    
 ?>
+
+<script type="text/javascript">
+
+function sentmail() {
+	param = new Object();
+
+  	param.user_name = $('#user-login').val();
+  	param.email = $('#email').val();
+  	param.message = $('#message').val();
+  	param.capcha = $('#capcha').val();
+
+  	if(param.user_name !=''){
+  		if(param.email !=''){
+  			if(param.message !=''){
+  				if(param.capcha !=''){
+                	$.ajax({
+                        url: "phpmailer/smtp.php",
+                	    data: param,
+                	   
+                        success: function(data) {
+                			if(data.status==1){
+                				alert('შეტყობინება წარმატებით გაიგზავნა!');
+                				$('#user-login').val('');
+                				$('#email').val('');
+                				$('#message').val('');
+                				$('#capcha').val('');
+                			}else{
+                				alert('შეტყობინება წარმატებით გაიგზავნა!');
+                			}
+                		}
+                    });
+  				}else{
+  	             	alert('ჩაწერეთ რიცხვების ჯამი');
+  	            }
+             }else{
+             	alert('შეავსე Name');
+             } 
+  		}else{
+        	alert('შეავსე Email');
+        }  
+    }else{
+        alert('შეავსე Message');
+    }        	
+}        	
+       // });
+    //});
+
+</script>
+
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
@@ -96,162 +154,16 @@
 				<h1 class="page_title">კონტაქტი</h1>
 				<div class="row-fluid">
 					<div class="span6">
-						<p>If you have any questions about how to install mSpy, or if
-							you need assistance regarding the purchasing process, please
-							contact our Customer Support representatives. They will do their
-							best to ensure your mSpy monitoring experience is hassle-free.</p>
-						<p>Our Service Team works around the clock to serve the needs
-							of all mSpy customers.</p>
+						<p>თუ გაქვთ შეკითხვა mSpy-სინსტალაციასთან ან ლიცენზიის შეძენასთან დაკავშირებით, დაგვიკავშირდით ნომერზე 2473232 (10:00 - 18:00 სთ),</p>
 						<div class="address_block">
-							<h3 class="title">Email us:</h3>
+							<h3 class="title">ან მოგვწერეთ:</h3>
 							<p class="item">
-								<span class="text">Sales Department:</span>
+								<span class="text">Email:</span>
 								<noindex>
 								<a rel="noindex"
-									href="cdn-cgi/l/email-protection#5023313c3523103d2320297e333f3d"><span
+									href="mailto:info@carekids.ge"><span
 									class="__cf_email__"
-									data-cfemail="b5c6d4d9d0c6f5d8c6c5cc9bd6dad8">[email&#160;protected]</span>
-								<script cf-hash='f9e31' type="text/javascript">
-									/* <![CDATA[ */!function() {
-										try {
-											var t = "currentScript" in document ? document.currentScript
-													: function() {
-														for (var t = document
-																.getElementsByTagName("script"), e = t.length; e--;)
-															if (t[e]
-																	.getAttribute("cf-hash"))
-																return t[e]
-													}();
-											if (t && t.previousSibling) {
-												var e, r, n, i, c = t.previousSibling, a = c
-														.getAttribute("data-cfemail");
-												if (a) {
-													for (e = "", r = parseInt(a
-															.substr(0, 2), 16),
-															n = 2; a.length - n; n += 2)
-																i = parseInt(
-																		a
-																				.substr(
-																						n,
-																						2),
-																		16)
-																		^ r,
-																e += String
-																		.fromCharCode(i);
-															e = document
-																	.createTextNode(e),
-															c.parentNode
-																	.replaceChild(
-																			e,
-																			c)
-												}
-											}
-										} catch (u) {
-										}
-									}();/* ]]> */
-								</script></a></noindex>
-							</p>
-							<p class="item">
-								<span class="text">Technical Support:</span>
-								<noindex>
-								<a rel="noindex"
-									href="cdn-cgi/l/email-protection#a6d5d3d6d6c9d4d2e6cbd5d6df88c5c9cb"><span
-									class="__cf_email__"
-									data-cfemail="50232520203f2224103d2320297e333f3d">[email&#160;protected]</span>
-								<script cf-hash='f9e31' type="text/javascript">
-									/* <![CDATA[ */!function() {
-										try {
-											var t = "currentScript" in document ? document.currentScript
-													: function() {
-														for (var t = document
-																.getElementsByTagName("script"), e = t.length; e--;)
-															if (t[e]
-																	.getAttribute("cf-hash"))
-																return t[e]
-													}();
-											if (t && t.previousSibling) {
-												var e, r, n, i, c = t.previousSibling, a = c
-														.getAttribute("data-cfemail");
-												if (a) {
-													for (e = "", r = parseInt(a
-															.substr(0, 2), 16),
-															n = 2; a.length - n; n += 2)
-																i = parseInt(
-																		a
-																				.substr(
-																						n,
-																						2),
-																		16)
-																		^ r,
-																e += String
-																		.fromCharCode(i);
-															e = document
-																	.createTextNode(e),
-															c.parentNode
-																	.replaceChild(
-																			e,
-																			c)
-												}
-											}
-										} catch (u) {
-										}
-									}();/* ]]> */
-								</script></a></noindex>
-							</p>
-							<p class="item">
-								<span class="text">Press and Media:</span>
-								<noindex>
-								<a rel="noindex"
-									href="cdn-cgi/l/email-protection#6e030b0a070f2e031d1e17400d0103"><span
-									class="__cf_email__"
-									data-cfemail="2a474f4e434b6a47595a5304494547">[email&#160;protected]</span>
-								<script cf-hash='f9e31' type="text/javascript">
-									/* <![CDATA[ */!function() {
-										try {
-											var t = "currentScript" in document ? document.currentScript
-													: function() {
-														for (var t = document
-																.getElementsByTagName("script"), e = t.length; e--;)
-															if (t[e]
-																	.getAttribute("cf-hash"))
-																return t[e]
-													}();
-											if (t && t.previousSibling) {
-												var e, r, n, i, c = t.previousSibling, a = c
-														.getAttribute("data-cfemail");
-												if (a) {
-													for (e = "", r = parseInt(a
-															.substr(0, 2), 16),
-															n = 2; a.length - n; n += 2)
-																i = parseInt(
-																		a
-																				.substr(
-																						n,
-																						2),
-																		16)
-																		^ r,
-																e += String
-																		.fromCharCode(i);
-															e = document
-																	.createTextNode(e),
-															c.parentNode
-																	.replaceChild(
-																			e,
-																			c)
-												}
-											}
-										} catch (u) {
-										}
-									}();/* ]]> */
-								</script></a></noindex>
-							</p>
-							<p class="item">
-								<span class="text">Affiliate Information:</span>
-								<noindex>
-								<a rel="noindex"
-									href="cdn-cgi/l/email-protection#e9888f8f808580889d8c9aa9849a9990c78a8684"><span
-									class="__cf_email__"
-									data-cfemail="2a4b4c4c4346434b5e4f596a47595a5304494547">[email&#160;protected]</span>
+									data-cfemail="2a4b4c4c4346434b5e4f596a47595a5304494547">[info@carekids.ge]</span>
 								<script cf-hash='f9e31' type="text/javascript">
 									/* <![CDATA[ */!function() {
 										try {
@@ -295,10 +207,9 @@
 						</div>
 					</div>
 					<div class="span6">
-						<p>Send us a message using the form below (all fields are
-							required):</p>
+						<p>გამოგვიგზავნეთ შეტყობინება ქვემოთ მოცემული ფორმის დახმარებით (ყველა ველის შევსება აუცილებელია)</p>
 						<div class="feedback_form">
-							<form action="about.php" onSubmit="return feedback(this)"
+							<form action="about.php"
 								method="post">
 								<div class="validate prepend2">
 									<p id="login-validate">* Enter Valid Name</p>
@@ -313,11 +224,11 @@
 											placeholder="Name" name="username">
 									</div>
 									<div class="item">
-										<input type="email" class="text-field" id="email"
+										<input  type="email" class="text-field" id="email"
 											placeholder="Email" name="email">
 									</div>
 									<div class="item">
-										<textarea type="text" class="text-field" id="message" rows="5"
+										<textarea  type="text" class="text-field" id="message" rows="5"
 											placeholder="Message" name="message"></textarea>
 									</div>
 									<div class="item">
@@ -326,14 +237,17 @@
 											<span class="num capB"></span> <span class="num equally">=</span>
 										</div>
 										<input type="number" class="text-field" id="capcha"
-											placeholder="Type the sum of the numbers" name="captcha">
+											placeholder="ჩაწერეთ რიცხვების ჯამი" name="captcha">
 									</div>
 								</div>
 								<div id="submit" class="submit_btn align_center">
-									<button type="submit" class="btn mid violet submit">SEND</button>
+									<button type="submit" onclick="sentmail()" class="btn mid violet submit">SEND</button>
+										
+									    
+									
 								</div>
 								<input type="hidden" name="do_send" value="1" />
-							</form>
+								</form>
 						</div>
 					</div>
 				</div>
