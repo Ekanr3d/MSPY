@@ -37,7 +37,7 @@ $mail->setFrom('support@tdgroup.ge', 'საიტიდან მოგვწ�
 $mail->addReplyTo('support@tdgroup.ge', 'საიტიდან მოგვწერეს');
 
 
-$mail->addAddress('aleqsandrefocxverashvili@gmail.com');
+$mail->addAddress('info@carekids.ge');
 
 //$mail->AddCC($bcc_address);
 
